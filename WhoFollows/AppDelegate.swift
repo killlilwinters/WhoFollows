@@ -4,6 +4,8 @@
 //
 //  Created by Maks Winters on 27.01.2025.
 //
+// https://forums.developer.apple.com/forums/thread/127655
+//
 
 import UIKit
 
