@@ -6,6 +6,8 @@
 //
 // https://medium.com/nyc-design/swift-4-add-icon-to-uitextfield-48f5ebf60aa1
 //
+// https://stackoverflow.com/questions/788323/how-to-disable-enable-the-return-key-in-a-uitextfield
+//
 
 import UIKit
 
@@ -53,6 +55,10 @@ final class WFTextField: UITextField {
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowRadius = 5
         layer.shadowOpacity = 0.4
+        
+        keyboardType = .default
+        returnKeyType = .go
+        enablesReturnKeyAutomatically = true
         
         autocorrectionType = .no
         autocapitalizationType = .none

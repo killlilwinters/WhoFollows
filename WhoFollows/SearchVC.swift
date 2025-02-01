@@ -10,38 +10,21 @@ import UIKit
 final class SearchVC: UIViewController {
     
     //MARK: - Private Property
-    
     private let imageLogoView = UIImageView()
     
     private let searchTextField: UITextField = WFTextField(icon: UIImage(systemName: "person"), placeholder: "Search a user")
     
     private let searchButton: UIButton = WFSearchButton()
     
-    private var searchGroupVStack: UIStackView = {
-        
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.spacing = 10
-        return stackView
-        
-    }()
+    //MARK: - Stacks
+    private var searchGroupVStack: UIStackView = WFStack(axis: .vertical, spacing: 10)
     
-    private var searchRowHStack: UIStackView = {
-        
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.spacing = 10
-        return stackView
-        
-    }()
+    private var searchRowHStack: UIStackView = WFStack(axis: .horizontal, spacing: 10)
     
     //MARK: - Override Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        view.backgroundColor = .systemBackground
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -51,31 +34,58 @@ final class SearchVC: UIViewController {
 
 }
 
+//MARK: - Logic
+extension SearchVC {
+    func pushFollowersListVC() {
+        let followersVC = FollowersListVC()
+        let text = searchTextField.text ?? ""
+        followersVC.username = text
+        followersVC.title = text
+        navigationController?.pushViewController(followersVC, animated: true)
+    }
+}
+
+
 //MARK: - Setting Views
 extension SearchVC {
     func setupView() {
+        view.backgroundColor = .systemBackground
+        
+        searchTextField.delegate = self
         
         addSubViews()
         
         setupLayout()
+        
+        createDismissKeyboardTapGestureRecognizer()
     }
 }
 
 //MARK: - Setting
 extension SearchVC {
+    
     func addSubViews() {
         imageLogoView.translatesAutoresizingMaskIntoConstraints = false
         imageLogoView.image = UIImage(resource: .whoFollowsText)
         imageLogoView.contentMode = .scaleAspectFit
         
+        // Search button and it's action
         view.addSubview(searchButton)
+        searchButton.addAction(UIAction { _ in self.pushFollowersListVC() }, for: .touchUpInside)
+        
         
         view.addSubview(searchGroupVStack)
         searchGroupVStack.addArrangedSubview(imageLogoView)
+        
         view.addSubview(searchRowHStack)
         searchGroupVStack.addArrangedSubview(searchRowHStack)
         searchRowHStack.addArrangedSubview(searchTextField)
         searchRowHStack.addArrangedSubview(searchButton)
+    }
+    
+    func createDismissKeyboardTapGestureRecognizer() {
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
+        view.addGestureRecognizer(tapGestureRecognizer)
     }
 }
 
@@ -86,12 +96,30 @@ extension SearchVC {
         //MARK: - SearchTextField
         NSLayoutConstraint.activate([
             searchGroupVStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            searchGroupVStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            searchGroupVStack.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -50),
             searchGroupVStack.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
             searchGroupVStack.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25)
         ])
         
     }
+}
+
+//MARK: - TextFieldDelegate
+extension SearchVC: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        pushFollowersListVC()
+        return true
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        if searchTextField.text?.isEmpty ?? true {
+            searchButton.isEnabled = false
+        } else {
+            searchButton.isEnabled = true
+        }
+    }
+    
 }
 
 #Preview {
