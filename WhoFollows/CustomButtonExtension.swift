@@ -11,22 +11,23 @@ import UIKit
 
 extension UIButton {
     static func makeCustomButton(
-        title: String,
+        title: String?,
         systemImage: String,
         style: UIButton.Configuration.CornerStyle = .medium,
         imagePlacement: NSDirectionalRectEdge = .leading,
-        color: UIColor = .systemBlue
-    ) -> UIButton {
+        color: UIColor = .systemBlue) -> UIButton {
         
-        var config = UIButton.Configuration.tinted()
-        config.title = title
+        var config = UIButton.Configuration.filled()
+        if let title = title {
+            config.title = title
+        }
         config.image = UIImage(systemName: systemImage)
         config.cornerStyle = style
         config.imagePlacement = imagePlacement
         config.imagePadding = 8
         config.contentInsets = .init(top: 10, leading: 10, bottom: 10, trailing: 10)
         config.baseBackgroundColor = color
-        config.baseForegroundColor = color
+            config.baseForegroundColor = .white
         let button = UIButton(configuration: config)
         return button
         

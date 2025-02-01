@@ -10,9 +10,32 @@ import UIKit
 final class SearchVC: UIViewController {
     
     //MARK: - Private Property
+    
+    private let imageLogoView = UIImageView()
+    
     private let searchTextField: UITextField = WFTextField(icon: UIImage(systemName: "person"), placeholder: "Search a user")
     
-    private let searchButton: UIButton = UIButton.makeCustomButton(title: "Search", systemImage: "magnifyingglass")
+    private let searchButton: UIButton = WFSearchButton()
+    
+    private var searchGroupVStack: UIStackView = {
+        
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .vertical
+        stackView.spacing = 10
+        return stackView
+        
+    }()
+    
+    private var searchRowHStack: UIStackView = {
+        
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        return stackView
+        
+    }()
     
     //MARK: - Override Methods
     override func viewDidLoad() {
@@ -20,8 +43,14 @@ final class SearchVC: UIViewController {
         setupView()
         view.backgroundColor = .systemBackground
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.isNavigationBarHidden = true
+    }
 
 }
+
 //MARK: - Setting Views
 extension SearchVC {
     func setupView() {
@@ -35,8 +64,18 @@ extension SearchVC {
 //MARK: - Setting
 extension SearchVC {
     func addSubViews() {
-        view.addSubview(searchTextField)
+        imageLogoView.translatesAutoresizingMaskIntoConstraints = false
+        imageLogoView.image = UIImage(resource: .whoFollowsText)
+        imageLogoView.contentMode = .scaleAspectFit
+        
         view.addSubview(searchButton)
+        
+        view.addSubview(searchGroupVStack)
+        searchGroupVStack.addArrangedSubview(imageLogoView)
+        view.addSubview(searchRowHStack)
+        searchGroupVStack.addArrangedSubview(searchRowHStack)
+        searchRowHStack.addArrangedSubview(searchTextField)
+        searchRowHStack.addArrangedSubview(searchButton)
     }
 }
 
@@ -44,11 +83,12 @@ extension SearchVC {
 extension SearchVC {
     func setupLayout() {
         
+        //MARK: - SearchTextField
         NSLayoutConstraint.activate([
-            searchTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            searchTextField.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            searchTextField.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8)
-            
+            searchGroupVStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            searchGroupVStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            searchGroupVStack.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            searchGroupVStack.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25)
         ])
         
     }

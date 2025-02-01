@@ -4,6 +4,8 @@
 //
 //  Created by Maks Winters on 28.01.2025.
 //
+// https://medium.com/nyc-design/swift-4-add-icon-to-uitextfield-48f5ebf60aa1
+//
 
 import UIKit
 
@@ -53,6 +55,7 @@ final class WFTextField: UITextField {
         layer.shadowOpacity = 0.4
         
         autocorrectionType = .no
+        autocapitalizationType = .none
         
         attributedPlaceholder = NSAttributedString(string: placeholder, attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
         
