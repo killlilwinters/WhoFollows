@@ -8,25 +8,21 @@
 import UIKit
 
 final class SearchVC: UIViewController {
-    
-    //MARK: - Private Property
+    // MARK: - Private Property
     private let imageLogoView = UIImageView()
-    
-    private let searchTextField: UITextField = WFTextField(icon: UIImage(systemName: "person"), placeholder: "Search a user")
-    
+    private let searchTextField: UITextField = WFTextField(
+        icon: UIImage(systemName: "person"),
+        placeholder: "Search a user"
+    )
     private let searchButton: UIButton = WFSearchButton()
-    
-    //MARK: - Stacks
+    // MARK: - Stacks
     private var searchGroupVStack: UIStackView = WFStack(axis: .vertical, spacing: 10)
-    
     private var searchRowHStack: UIStackView = WFStack(axis: .horizontal, spacing: 10)
-    
-    //MARK: - Override Methods
+    // MARK: - Override Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
     }
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.isNavigationBarHidden = true
@@ -34,9 +30,9 @@ final class SearchVC: UIViewController {
 
 }
 
-//MARK: - Logic
+// MARK: - Logic
 extension SearchVC {
-    func pushFollowersListVC() {
+    private func pushFollowersListVC() {
         let followersVC = FollowersListVC()
         let text = searchTextField.text ?? ""
         followersVC.username = text
@@ -45,73 +41,58 @@ extension SearchVC {
     }
 }
 
-
-//MARK: - Setting Views
+// MARK: - Setting Views
 extension SearchVC {
-    func setupView() {
+    private func setupView() {
         view.backgroundColor = .systemBackground
-        
         searchTextField.delegate = self
-        
         addSubViews()
-        
         setupLayout()
-        
         createDismissKeyboardTapGestureRecognizer()
     }
 }
 
-//MARK: - Setting
+// MARK: - Setting
 extension SearchVC {
-    
-    func addSubViews() {
+    private func addSubViews() {
         imageLogoView.translatesAutoresizingMaskIntoConstraints = false
         imageLogoView.image = UIImage(resource: .whoFollowsText)
         imageLogoView.contentMode = .scaleAspectFit
-        
         // Search button and it's action
         view.addSubview(searchButton)
         searchButton.addAction(UIAction { _ in self.pushFollowersListVC() }, for: .touchUpInside)
-        
-        
         view.addSubview(searchGroupVStack)
         searchGroupVStack.addArrangedSubview(imageLogoView)
-        
         view.addSubview(searchRowHStack)
         searchGroupVStack.addArrangedSubview(searchRowHStack)
         searchRowHStack.addArrangedSubview(searchTextField)
         searchRowHStack.addArrangedSubview(searchButton)
     }
-    
-    func createDismissKeyboardTapGestureRecognizer() {
+    private func createDismissKeyboardTapGestureRecognizer() {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing))
         view.addGestureRecognizer(tapGestureRecognizer)
     }
 }
 
-//MARK: - Layout
+// MARK: - Layout
 extension SearchVC {
-    func setupLayout() {
-        
-        //MARK: - SearchTextField
+    private func setupLayout() {
+        // MARK: - SearchTextField
         NSLayoutConstraint.activate([
             searchGroupVStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             searchGroupVStack.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: -50),
             searchGroupVStack.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
             searchGroupVStack.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25)
         ])
-        
     }
 }
 
-//MARK: - TextFieldDelegate
+// MARK: - TextFieldDelegate
 extension SearchVC: UITextFieldDelegate {
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         pushFollowersListVC()
         return true
     }
-    
     func textFieldDidChangeSelection(_ textField: UITextField) {
         if searchTextField.text?.isEmpty ?? true {
             searchButton.isEnabled = false
@@ -119,7 +100,6 @@ extension SearchVC: UITextFieldDelegate {
             searchButton.isEnabled = true
         }
     }
-    
 }
 
 #Preview {

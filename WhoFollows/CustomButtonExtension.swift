@@ -16,7 +16,6 @@ extension UIButton {
         style: UIButton.Configuration.CornerStyle = .medium,
         imagePlacement: NSDirectionalRectEdge = .leading,
         color: UIColor = .systemBlue) -> UIButton {
-        
         var config = UIButton.Configuration.filled()
         if let title = title {
             config.title = title
@@ -30,11 +29,12 @@ extension UIButton {
             config.baseForegroundColor = .white
         let button = UIButton(configuration: config)
         return button
-        
     }
 }
 
-
 #Preview {
-    UIButton.makeCustomButton(title: "Test button", systemImage: "arrow.forward.circle", imagePlacement: .trailing, color: .systemGreen)
+    UIButton.makeCustomButton(title: "Test button",
+                              systemImage: "arrow.forward.circle",
+                              imagePlacement: .trailing,
+                              color: .systemGreen)
 }
