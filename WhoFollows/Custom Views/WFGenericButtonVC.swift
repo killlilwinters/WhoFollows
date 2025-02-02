@@ -27,10 +27,6 @@ final class WFGenericButtonVC: UIButton {
         config.contentInsets = .init(top: 12, leading: 20, bottom: 12, trailing: 20)
         config.baseBackgroundColor = color
         config.baseForegroundColor = .white
-        // Shadow
-        layer.shadowColor = UIColor.black.cgColor
-        layer.shadowRadius = 5
-        layer.shadowOpacity = 0.4
         // Other
         configuration = config
         translatesAutoresizingMaskIntoConstraints = false

@@ -13,9 +13,6 @@ class WFAlertVC: UIViewController {
         let containerView = UIView()
         containerView.backgroundColor = .alertBackground
         containerView.layer.cornerRadius = 20
-        containerView.layer.shadowColor = UIColor.black.cgColor
-        containerView.layer.shadowOpacity = 0.4
-        containerView.layer.shadowRadius = 8
         containerView.translatesAutoresizingMaskIntoConstraints = false
         return containerView
     }()
@@ -87,7 +84,7 @@ extension WFAlertVC {
         NSLayoutConstraint.activate([
             containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            containerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
+            containerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.75),
             containerView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.22)
         ])
         // vStack

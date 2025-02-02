@@ -14,7 +14,7 @@
 		E96EA1082D4832A000F0DD2D /* Exceptions for "WhoFollows" folder in "WhoFollows" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				Support/Info.plist,
 			);
 			target = E96EA0F52D48329F00F0DD2D /* WhoFollows */;
 		};
