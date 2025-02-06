@@ -1,0 +1,13 @@
+# Xcode project workspace settings
+WhoFollows.xcodeproj/project.xcworkspace/
+WhoFollows.xcworkspace/
+WhoFollows.xcodeproj/xcuserdata/
+
+# Derived data and build artifacts
+DerivedData/
+build/
+
+# Swift Package Manager
+Packages/
+*.xcworkspace/xcuserdata/
+
