@@ -15,8 +15,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				Model/Follower.swift,
-				Model/User.swift,
 			);
 			target = E96EA0F52D48329F00F0DD2D /* WhoFollows */;
 		};

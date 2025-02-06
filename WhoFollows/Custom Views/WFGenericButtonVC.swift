@@ -26,7 +26,6 @@ final class WFGenericButtonVC: UIButton {
         config.imagePadding = 8
         config.contentInsets = .init(top: 12, leading: 20, bottom: 12, trailing: 20)
         config.baseBackgroundColor = color
-        config.baseForegroundColor = .white
         // Other
         configuration = config
         translatesAutoresizingMaskIntoConstraints = false

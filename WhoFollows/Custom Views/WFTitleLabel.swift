@@ -19,7 +19,7 @@ final class WFTitleLabel: UILabel {
     init(textAlignment: NSTextAlignment, fontSize: CGFloat) {
         super.init(frame: .zero)
         self.textAlignment = textAlignment
-        self.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .headline), size: fontSize)
+        self.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .title2), size: fontSize)
         setupLabel()
     }
     private func setupLabel() {

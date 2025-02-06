@@ -28,6 +28,19 @@ final class FollowersListVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         view.inputViewController?.navigationItem.title = username
+        // MARK: Testing
+        let networkManager = NetworkManager.shared
+        networkManager.getFollowers(for: username, page: 1) { result in
+            switch result {
+            case .success(let followers):
+                print(followers)
+            case .failure(let error):
+                self.presentWFAlertVCOnMainThread(title: "Someting went wrong...",
+                                                  message: error.rawValue,
+                                                  buttonTitle: "OK")
+            }
+        }
+        // MARK: Testing end
         addSubViews()
         setupLayout()
     }
@@ -57,4 +70,8 @@ extension FollowersListVC {
             label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
+}
+
+#Preview {
+    FollowersListVC()
 }

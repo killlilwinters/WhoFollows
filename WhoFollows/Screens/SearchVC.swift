@@ -4,6 +4,8 @@
 //
 //  Created by Maks Winters on 28.01.2025.
 //
+// https://medium.com/@dineshk1389/content-hugging-and-compression-resistance-in-ios-35a0e8f19118
+//
 
 import UIKit
 
@@ -45,6 +47,7 @@ extension SearchVC {
 extension SearchVC {
     private func setupView() {
         view.backgroundColor = .systemBackground
+        // TODO: Limit textfield to 39 characters
         searchTextField.delegate = self
         addSubViews()
         setupLayout()
@@ -84,6 +87,11 @@ extension SearchVC {
             searchGroupVStack.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.8),
             searchGroupVStack.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25)
         ])
+        // MARK: Fix button hugging and resistance priority
+        searchTextField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        searchTextField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        searchButton.setContentHuggingPriority(.required, for: .horizontal)
+        searchButton.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 }
 

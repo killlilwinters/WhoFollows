@@ -16,7 +16,7 @@ class WFAlertVC: UIViewController {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         return containerView
     }()
-    private let titleLabel = WFTitleLabel(textAlignment: .center, fontSize: 30)
+    private let titleLabel = WFTitleLabel(textAlignment: .center, fontSize: 25)
     private let messageLabel = WFBodyLabel(textAlignment: .center)
     private let button = WFGenericButtonVC(text: "OK", color: .systemOrange)
     private var vStack: UIStackView = WFStack(axis: .vertical, spacing: 20)
@@ -52,7 +52,6 @@ extension WFAlertVC {
 
 extension WFAlertVC {
     private func setupView() {
-        view.backgroundColor = .systemBackground
         addSubVIews()
         setupLayout()
     }
@@ -91,7 +90,7 @@ extension WFAlertVC {
         NSLayoutConstraint.activate([
             vStack.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             vStack.widthAnchor.constraint(equalTo: containerView.widthAnchor),
-            vStack.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 20)
+            vStack.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 25)
         ])
         // button
         NSLayoutConstraint.activate([
