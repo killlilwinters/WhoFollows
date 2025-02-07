@@ -47,10 +47,9 @@ extension SearchVC {
 extension SearchVC {
     private func setupView() {
         view.backgroundColor = .systemBackground
-        // TODO: Limit textfield to 39 characters
-        searchTextField.delegate = self
         addSubViews()
         setupLayout()
+        setupTextField()
         createDismissKeyboardTapGestureRecognizer()
     }
 }
@@ -58,16 +57,20 @@ extension SearchVC {
 // MARK: - Setting
 extension SearchVC {
     private func addSubViews() {
+        // Setup image logo
         imageLogoView.translatesAutoresizingMaskIntoConstraints = false
         imageLogoView.image = UIImage(resource: .whoFollowsText)
         imageLogoView.contentMode = .scaleAspectFit
         // Search button and it's action
         view.addSubview(searchButton)
         searchButton.addAction(UIAction { _ in self.pushFollowersListVC() }, for: .touchUpInside)
+        // Setup stacks
         view.addSubview(searchGroupVStack)
-        searchGroupVStack.addArrangedSubview(imageLogoView)
         view.addSubview(searchRowHStack)
+        // Add VStack subviews
+        searchGroupVStack.addArrangedSubview(imageLogoView)
         searchGroupVStack.addArrangedSubview(searchRowHStack)
+        // Add HStack subviews
         searchRowHStack.addArrangedSubview(searchTextField)
         searchRowHStack.addArrangedSubview(searchButton)
     }
@@ -88,10 +91,19 @@ extension SearchVC {
             searchGroupVStack.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.25)
         ])
         // MARK: Fix button hugging and resistance priority
+        // The text field is willing to expand when extra space is available
         searchTextField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        // The text field is willing to shrink when space is tight
         searchTextField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        // The button wants to maintain its intrinsic size and will resist expanding
         searchButton.setContentHuggingPriority(.required, for: .horizontal)
+        // The button refuses to shrink when space is limited
         searchButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+    }
+    func setupTextField() {
+        // MARK: Setup Text Field
+        searchTextField.delegate = self
+        searchTextField.maxLength = 39
     }
 }
 
