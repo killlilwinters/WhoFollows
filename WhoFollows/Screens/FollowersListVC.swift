@@ -8,15 +8,15 @@
 import UIKit
 
 final class FollowersListVC: UIViewController {
+    // MARK: DiffableDS Enum
+    enum Section {
+        case main
+    }
+    // MARK: Properties
     var username: String!
-    private lazy var label: UILabel = {
-        let label = UILabel()
-        label.text = username
-        label.textColor = .label
-        label.allowsDefaultTighteningForTruncation = true
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private var collectionView: UICollectionView!
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
+    // MARK: Initializers
     init() {
         super.init(nibName: nil, bundle: nil)
     }
@@ -26,23 +26,14 @@ final class FollowersListVC: UIViewController {
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        view.inputViewController?.navigationItem.title = username
-        // MARK: Testing
-        let networkManager = NetworkManager.shared
-        networkManager.getFollowers(for: username, page: 1) { result in
-            switch result {
-            case .success(let followers):
-                print(followers)
-            case .failure(let error):
-                self.presentWFAlertVCOnMainThread(title: "Someting went wrong...",
-                                                  message: error.rawValue,
-                                                  buttonTitle: "OK")
-            }
-        }
-        // MARK: Testing end
+        // Display followers setup (has to go first)
+        setupCollectionView()
+        setupDataSource()
+        getFollowers()
+        // Setup
+        setupView()
         addSubViews()
-        setupLayout()
+//        setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -51,25 +42,78 @@ final class FollowersListVC: UIViewController {
 }
 // MARK: - Logic
 extension FollowersListVC {
+    func getFollowers() {
+        NetworkManager.shared.getFollowers(
+            for: username,
+            page: 1
+        ) { [weak self] result in
+            // Check if self is nil
+            guard let self = self else { return }
+            // Proceed
+            switch result {
+            case .success(let followers):
+                self.setupSnapshot(followers: followers)
+            case .failure(let error):
+                self.presentWFAlertVCOnMainThread(
+                    title: "Something went wrong...",
+                    message: error.rawValue,
+                    buttonTitle: "OK"
+                )
+            }
+        }
+    }
 }
 // MARK: = Setting View
 extension FollowersListVC {
+    func setupView() {
+        view.backgroundColor = .systemBackground
+        view.inputViewController?.navigationItem.title = username
+    }
 }
 // MARK: - Setting
 extension FollowersListVC {
-    func addSubViews() {
-        view.addSubview(label)
+    private func addSubViews() {
+        view.addSubview(collectionView)
+    }
+    private func setupCollectionView() {
+        // FlowLayout
+        let flowLayout = UICollectionViewFlowLayout().setupCustomFlowLayout(
+            numOfColumns: 2,
+            view: view
+        )
+        // Collection View
+        collectionView = UICollectionView(
+            frame: view.bounds,
+            collectionViewLayout: flowLayout
+        )
+        collectionView.backgroundColor = .systemBackground
+        collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseId)
+    }
+    private func setupDataSource() {
+        dataSource = UICollectionViewDiffableDataSource<Section, Follower>(
+            collectionView: collectionView
+        ) { collectionView, indexPath, follower in
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: FollowerCell.reuseId,
+                for: indexPath
+            ) as? FollowerCell else {
+                fatalError("Could not create new cell")
+            }
+            cell.set(follower: follower)
+            return cell
+        }
+    }
+    private func setupSnapshot(followers: [Follower]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Follower>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(followers)
+        self.dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
 // MARK: - Layout
 extension FollowersListVC {
-    func setupLayout() {
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
+//    func setupLayout() { }
 }
 
 #Preview {

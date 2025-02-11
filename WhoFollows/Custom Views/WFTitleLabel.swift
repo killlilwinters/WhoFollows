@@ -11,6 +11,7 @@ final class WFTitleLabel: UILabel {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupLabel()
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
