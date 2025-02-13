@@ -7,13 +7,20 @@
 
 import UIKit
 
-final class FollowersListVC: UIViewController {
+final class FollowersListVC: UIViewController, DataLoadingView {
+    // Conform to DataLoadingView
+    var containerView: UIView!
     // MARK: DiffableDS Enum
     enum Section {
         case main
     }
     // MARK: Properties
+    private let networkManager = NetworkManager.shared
     var username: String!
+    private var page = 1
+    private var hasMoreFollowers = true
+    private var followers = [Follower]()
+    // MARK: Inits
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
     // MARK: Initializers
@@ -43,16 +50,18 @@ final class FollowersListVC: UIViewController {
 // MARK: - Logic
 extension FollowersListVC {
     func getFollowers() {
-        NetworkManager.shared.getFollowers(
-            for: username,
-            page: 1
-        ) { [weak self] result in
+        showLoadingView()
+        networkManager.getFollowers(for: username, page: page) { [weak self] result in
             // Check if self is nil
             guard let self = self else { return }
+                self.dismissLoadingView()
             // Proceed
             switch result {
             case .success(let followers):
-                self.setupSnapshot(followers: followers)
+                if followers.count < networkManager.followersPerPage {
+                    self.hasMoreFollowers = false
+                }
+                self.appendToSnapshot(followers: followers)
             case .failure(let error):
                 self.presentWFAlertVCOnMainThread(
                     title: "Something went wrong...",
@@ -86,6 +95,7 @@ extension FollowersListVC {
             frame: view.bounds,
             collectionViewLayout: flowLayout
         )
+        collectionView.delegate = self
         collectionView.backgroundColor = .systemBackground
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseId)
     }
@@ -103,17 +113,26 @@ extension FollowersListVC {
             return cell
         }
     }
-    private func setupSnapshot(followers: [Follower]) {
+    private func appendToSnapshot(followers newFollowers: [Follower]) {
+        followers.append(contentsOf: newFollowers)
         var snapshot = NSDiffableDataSourceSnapshot<Section, Follower>()
         snapshot.appendSections([.main])
         snapshot.appendItems(followers)
         self.dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
-
-// MARK: - Layout
-extension FollowersListVC {
-//    func setupLayout() { }
+// MARK: - Collection view delegate
+extension FollowersListVC: UICollectionViewDelegate {
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let frameHeight = scrollView.frame.height
+        if offsetY + frameHeight >= contentHeight {
+            guard hasMoreFollowers else { return }
+            page += 1
+            getFollowers()
+        }
+    }
 }
 
 #Preview {

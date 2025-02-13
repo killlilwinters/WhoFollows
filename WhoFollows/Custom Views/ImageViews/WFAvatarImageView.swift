@@ -30,11 +30,9 @@ final class WFAvatarImageView: UIImageView {
     }
     // MARK: Network request
     func downloadImage(from urlString: String) {
-        // Set default
+        // Set default so the cells don't reuse images they were previously assigned
         image = WFAvatarImageView.placeholderImage
-        // Check in cache
-        let nsUrlString = urlString as NSString
-        if let image = cache.object(forKey: nsUrlString) {
+        getFromCache(for: urlString) { image in
             self.image = image
             return
         }
@@ -53,11 +51,26 @@ final class WFAvatarImageView: UIImageView {
             guard let image = UIImage(data: data) else {
                 return
             }
-            self.cache.setObject(image, forKey: nsUrlString)
+            self.setToCache(image: image, for: urlString)
             DispatchQueue.main.async {
                 self.image = image
             }
         }
         task.resume()
+    }
+}
+
+// MARK: - Caching logic
+extension WFAvatarImageView {
+    private func getFromCache(for urlString: String, completion: @escaping (UIImage?) -> Void) {
+        let nsUrlString = urlString as NSString
+        if let image = cache.object(forKey: nsUrlString) {
+            self.image = image
+            completion(image)
+        }
+    }
+    private func setToCache(image: UIImage, for urlString: String) {
+        let nsUrlString = urlString as NSString
+        self.cache.setObject(image, forKey: nsUrlString)
     }
 }
