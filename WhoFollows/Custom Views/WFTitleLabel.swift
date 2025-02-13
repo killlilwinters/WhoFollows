@@ -9,7 +9,7 @@ import UIKit
 
 final class WFTitleLabel: UILabel {
 
-    override init(frame: CGRect) {
+    private override init(frame: CGRect) {
         super.init(frame: frame)
         setupLabel()
     }
@@ -20,7 +20,7 @@ final class WFTitleLabel: UILabel {
     init(textAlignment: NSTextAlignment, fontSize: CGFloat) {
         super.init(frame: .zero)
         self.textAlignment = textAlignment
-        self.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .title2), size: fontSize)
+        self.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .headline), size: fontSize)
         setupLabel()
     }
     private func setupLabel() {

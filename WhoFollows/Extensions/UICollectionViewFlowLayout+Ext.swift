@@ -25,7 +25,7 @@ extension UICollectionViewFlowLayout {
         // Item setup
         let itemWidth = availableWidth / numOfColumns
         self.allAroundSectionInset(padding: padding)
-        self.itemSize = CGSize(width: itemWidth, height: itemWidth + 35)
+        self.itemSize = CGSize(width: itemWidth, height: itemWidth + 50)
         return self
     }
 }

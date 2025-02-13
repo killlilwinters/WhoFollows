@@ -7,9 +7,10 @@
 
 import UIKit
 
-class WFAvatarImageView: UIImageView {
+final class WFAvatarImageView: UIImageView {
     // MARK: Private properties
-    let placeholderImage: UIImage = UIImage(resource: .avatarPlaceholder)
+    private static let placeholderImage = UIImage(resource: .avatarPlaceholder)
+    private let cache = NetworkManager.shared.imageCache
     // MARK: Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -20,11 +21,43 @@ class WFAvatarImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     // MARK: Configure
-    func setupImageView() {
+    private func setupImageView() {
         layer.cornerRadius = 10
         clipsToBounds = true
-        image = placeholderImage
+        image = WFAvatarImageView.placeholderImage
         contentMode = .scaleAspectFit
         translatesAutoresizingMaskIntoConstraints = false
+    }
+    // MARK: Network request
+    func downloadImage(from urlString: String) {
+        // Set default
+        image = WFAvatarImageView.placeholderImage
+        // Check in cache
+        let nsUrlString = urlString as NSString
+        if let image = cache.object(forKey: nsUrlString) {
+            self.image = image
+            return
+        }
+        // Proceed to download
+        guard let url = URL(string: urlString) else { return }
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if error != nil {
+                return
+            }
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                return
+            }
+            guard let data = data else {
+                return
+            }
+            guard let image = UIImage(data: data) else {
+                return
+            }
+            self.cache.setObject(image, forKey: nsUrlString)
+            DispatchQueue.main.async {
+                self.image = image
+            }
+        }
+        task.resume()
     }
 }

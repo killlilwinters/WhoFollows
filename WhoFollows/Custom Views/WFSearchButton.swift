@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WFSearchButton: UIButton {
+final class WFSearchButton: UIButton {
     // MARK: - Initializers
     init() {
         super.init(frame: .zero)

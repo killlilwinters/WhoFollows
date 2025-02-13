@@ -63,6 +63,7 @@ extension SearchVC {
         imageLogoView.contentMode = .scaleAspectFit
         // Search button and it's action
         view.addSubview(searchButton)
+        searchButton.isEnabled = false
         searchButton.addAction(UIAction { _ in self.pushFollowersListVC() }, for: .touchUpInside)
         // Setup stacks
         view.addSubview(searchGroupVStack)

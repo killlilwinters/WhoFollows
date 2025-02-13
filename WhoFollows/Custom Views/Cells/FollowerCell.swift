@@ -9,12 +9,12 @@
 
 import UIKit
 
-class FollowerCell: UICollectionViewCell {
+final class FollowerCell: UICollectionViewCell {
     // MARK: Reuse ID
     static let reuseId = "FollowerCell"
     // MARK: Private properties
     private let avatarImageView = WFAvatarImageView(frame: .zero)
-    private let usernameLabel = WFTitleLabel(frame: .zero)
+    private let usernameLabel = WFTitleLabel(textAlignment: .center, fontSize: 20)
     // MARK: Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,6 +26,7 @@ class FollowerCell: UICollectionViewCell {
     }
     func set(follower: Follower) {
         usernameLabel.text = follower.login
+        avatarImageView.downloadImage(from: follower.avatarUrl)
     }
 }
 
@@ -54,18 +55,28 @@ extension FollowerCell {
         // Username Label
         NSLayoutConstraint.activate([
             usernameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
-            usernameLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
+            usernameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 15),
+            usernameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
+            usernameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
         ])
+        // Set required priority for label so it doesn't move
+        usernameLabel.setContentHuggingPriority(
+            .required,
+            for: .vertical
+        )
+        usernameLabel.setContentCompressionResistancePriority(
+            .required,
+            for: .vertical
+        )
         // Avatar Image View
         NSLayoutConstraint.activate([
             avatarImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            avatarImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            avatarImageView.bottomAnchor.constraint(equalTo: usernameLabel.topAnchor, constant: -10)
+            avatarImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
         ])
     }
 }
-// MARK: Listen to theme change
+// MARK: - Listen to theme change
 extension FollowerCell {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {

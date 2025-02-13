@@ -33,7 +33,7 @@ final class FollowersListVC: UIViewController {
         // Setup
         setupView()
         addSubViews()
-//        setupLayout()
+        // setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -63,7 +63,7 @@ extension FollowersListVC {
         }
     }
 }
-// MARK: = Setting View
+// MARK: - Setting View
 extension FollowersListVC {
     func setupView() {
         view.backgroundColor = .systemBackground

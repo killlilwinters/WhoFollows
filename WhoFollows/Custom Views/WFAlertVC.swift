@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WFAlertVC: UIViewController {
+final class WFAlertVC: UIViewController {
     // MARK: - Private Property
     private let containerView: UIView = {
         let containerView = UIView()
@@ -68,10 +68,11 @@ extension WFAlertVC {
         vStack.alignment = .center
         vStack.addArrangedSubview(titleLabel)
         vStack.addArrangedSubview(messageLabel)
+        vStack.addArrangedSubview(button)
         // Other
-        containerView.addSubview(button)
+//        containerView.addSubview(button)
         messageLabel.text = message ?? "Unable to complete request..."
-        messageLabel.numberOfLines = 2
+        messageLabel.numberOfLines = 3
         containerView.addSubview(vStack)
     }
 }
@@ -81,26 +82,31 @@ extension WFAlertVC {
     func setupLayout() {
         // Container view
         NSLayoutConstraint.activate([
-            containerView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            containerView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            containerView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.75),
-            containerView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.22)
+            containerView.topAnchor.constraint(equalTo: vStack.topAnchor),
+            containerView.topAnchor.constraint(equalTo: titleLabel.topAnchor, constant: -20),
+            containerView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: 15),
+            containerView.leadingAnchor.constraint(equalTo: vStack.leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: vStack.trailingAnchor)
         ])
         // vStack
         NSLayoutConstraint.activate([
-            vStack.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            vStack.widthAnchor.constraint(equalTo: containerView.widthAnchor),
-            vStack.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 25)
+            vStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            vStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            vStack.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.80)
         ])
         // button
         NSLayoutConstraint.activate([
-            button.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
-            button.widthAnchor.constraint(equalTo: containerView.widthAnchor, multiplier: 0.5),
-            button.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -20)
+            button.centerXAnchor.constraint(equalTo: vStack.centerXAnchor),
+            button.widthAnchor.constraint(equalTo: vStack.widthAnchor, multiplier: 0.6),
+            button.bottomAnchor.constraint(equalTo: vStack.bottomAnchor, constant: -20)
+        ])
+        // titleLabel
+        NSLayoutConstraint.activate([
+            messageLabel.widthAnchor.constraint(equalTo: vStack.widthAnchor, multiplier: 0.8)
         ])
     }
 }
 
 #Preview {
-    WFAlertVC(alertTitle: "Error occured!", message: "Something went wrong!")
+    WFAlertVC(alertTitle: "Error occured!", message: NetworkError.somethingWentWrong.rawValue)
 }
