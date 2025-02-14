@@ -49,19 +49,17 @@ final class FollowersListVC: UIViewController, DataLoadingView {
 }
 // MARK: - Logic
 extension FollowersListVC {
-    func getFollowers() {
+    private func getFollowers() {
         showLoadingView()
         networkManager.getFollowers(for: username, page: page) { [weak self] result in
             // Check if self is nil
             guard let self = self else { return }
                 self.dismissLoadingView()
-            // Proceed
             switch result {
             case .success(let followers):
-                if followers.count < networkManager.followersPerPage {
-                    self.hasMoreFollowers = false
-                }
+                checkIfHasMoreFollowers(followers)
                 self.appendToSnapshot(followers: followers)
+                checkIfHasFollowers(followers)
             case .failure(let error):
                 self.presentWFAlertVCOnMainThread(
                     title: "Something went wrong...",
@@ -69,6 +67,19 @@ extension FollowersListVC {
                     buttonTitle: "OK"
                 )
             }
+        }
+    }
+    private func checkIfHasFollowers(_: [Follower]) {
+        if self.followers.isEmpty {
+            let message = "This user doesn't seem to have any followers yet..."
+            DispatchQueue.main.async {
+                self.displayEmptyStateView(with: message, in: self.view)
+            }
+        }
+    }
+    private func checkIfHasMoreFollowers(_ followers: [Follower]) {
+        if followers.count < networkManager.followersPerPage {
+            self.hasMoreFollowers = false
         }
     }
 }

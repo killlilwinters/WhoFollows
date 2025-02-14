@@ -17,6 +17,7 @@ final class WFTextField: UITextField {
     init(icon: UIImage? = nil, placeholder: String) {
         super.init(frame: .zero)
         setupTextField(icon: icon, placeholder: placeholder)
+        registerForApperanceChanges()
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -61,15 +62,9 @@ final class WFTextField: UITextField {
     }
 }
 
-extension UITextField {
-    func setIcon(_ image: UIImage) {
-        let iconView = UIImageView(frame: CGRect(x: 15, y: 5, width: 20, height: 20))
-        iconView.image = image
-        let iconContainerView = UIView(frame: CGRect(x: 20, y: 0, width: 30, height: 30))
-        iconContainerView.addSubview(iconView)
-        leftViewMode = .always
-        leftView = iconContainerView
-        tintColor = .white
+extension WFTextField: ManualTheming {
+    func updateAppearance() {
+        layer.backgroundColor = UIColor.systemGray2.cgColor
     }
 }
 

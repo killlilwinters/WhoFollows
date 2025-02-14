@@ -33,4 +33,14 @@ extension UITextField {
         text = textField.text?.prefix(maxLength ?? _maxLength).description
         selectedTextRange = selection
     }
+    
+    func setIcon(_ image: UIImage) {
+        let iconView = UIImageView(frame: CGRect(x: 15, y: 5, width: 20, height: 20))
+        iconView.image = image
+        let iconContainerView = UIView(frame: CGRect(x: 20, y: 0, width: 30, height: 30))
+        iconContainerView.addSubview(iconView)
+        leftViewMode = .always
+        leftView = iconContainerView
+        tintColor = .white
+    }
 }

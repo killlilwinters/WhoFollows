@@ -16,4 +16,9 @@ extension UIViewController {
             self.present(alertVC, animated: true)
         }
     }
-}
+    func displayEmptyStateView(with message: String, in view: UIView) {
+        let emptyStateView = WFEmptyStateView(message: message)
+        emptyStateView.frame = view.bounds
+        view.addSubview(emptyStateView)
+    }
+ }

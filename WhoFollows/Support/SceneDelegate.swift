@@ -34,6 +34,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let tabBarC = UITabBarController()
         UITabBar.appearance().tintColor = .systemOrange
         tabBarC.viewControllers = [createSearchNC(), createFavoritesNC()]
+        /*
+        let appearance = UITabBarAppearance()
+        appearance.configureWithDefaultBackground()
+        tabBarC.tabBar.standardAppearance = appearance
+         */
         return tabBarC
     }
     func sceneDidDisconnect(_ scene: UIScene) {

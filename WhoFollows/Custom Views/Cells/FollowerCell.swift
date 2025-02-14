@@ -19,6 +19,7 @@ final class FollowerCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCell()
+        registerForApperanceChanges()
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -77,11 +78,9 @@ extension FollowerCell {
     }
 }
 // MARK: - Listen to theme change
-extension FollowerCell {
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            layer.borderColor = UIColor(resource: .followerCellBackground).cgColor
-        }
+extension FollowerCell: ManualTheming {
+    func updateAppearance() {
+        layer.borderColor = UIColor(resource: .followerCellBackground).cgColor
     }
 }
 
