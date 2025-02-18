@@ -17,6 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         window?.rootViewController = createTabBar()
         window?.makeKeyAndVisible()
+        setupNavigationBarAppearance()
     }
     func createSearchNC() -> UINavigationController {
         let searchVC = SearchVC()
@@ -40,6 +41,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         tabBarC.tabBar.standardAppearance = appearance
          */
         return tabBarC
+    }
+    func setupNavigationBarAppearance() {
+        UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
     }
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

@@ -19,18 +19,14 @@ final class FollowersListVC: UIViewController, DataLoadingView {
     var username: String!
     private var page = 1
     private var hasMoreFollowers = true
+    // Followers and filtering
+    private var isFiltering = false
     private var followers = [Follower]()
+    private var filteredFollowers = [Follower]()
     // MARK: Inits
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
-    // MARK: Initializers
-    init() {
-        super.init(nibName: nil, bundle: nil)
-    }
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // MARK: ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         // Display followers setup (has to go first)
@@ -41,7 +37,6 @@ final class FollowersListVC: UIViewController, DataLoadingView {
         setupView()
         setupSearchController()
         addSubViews()
-        // setupLayout()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -147,14 +142,24 @@ extension FollowersListVC: UICollectionViewDelegate {
             getFollowers()
         }
     }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Getting the item
+        let currentArray = isFiltering ? filteredFollowers : followers
+        let follower = currentArray[indexPath.item]
+        // Displaying the userinfo screen
+        let detailVC = UserInfoVC(follower: follower)
+        let navController = UINavigationController(rootViewController: detailVC)
+        present(navController, animated: true)
+    }
 }
 // MARK: - Search Controller Setup
 extension FollowersListVC: UISearchResultsUpdating, UISearchBarDelegate {
     func updateSearchResults(for searchController: UISearchController) {
+        isFiltering = true
         guard let filter = searchController.searchBar.text, !filter.isEmpty else {
             return
         }
-        let filteredFollowers = followers.filter {
+        filteredFollowers = followers.filter {
             return $0.login.containsCaseInsensitive(filter)
         }
         updateSnapshot(with: filteredFollowers)
@@ -167,6 +172,7 @@ extension FollowersListVC: UISearchResultsUpdating, UISearchBarDelegate {
         navigationItem.searchController = searchController
     }
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        isFiltering = false
         updateSnapshot(with: followers)
     }
 }
