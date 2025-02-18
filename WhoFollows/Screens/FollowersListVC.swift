@@ -39,6 +39,7 @@ final class FollowersListVC: UIViewController, DataLoadingView {
         getFollowers()
         // Setup
         setupView()
+        setupSearchController()
         addSubViews()
         // setupLayout()
     }
@@ -58,7 +59,8 @@ extension FollowersListVC {
             switch result {
             case .success(let followers):
                 checkIfHasMoreFollowers(followers)
-                self.appendToSnapshot(followers: followers)
+                self.followers.append(contentsOf: followers)
+                self.updateSnapshot(with: followers)
                 checkIfHasFollowers(followers)
             case .failure(let error):
                 self.presentWFAlertVCOnMainThread(
@@ -124,12 +126,13 @@ extension FollowersListVC {
             return cell
         }
     }
-    private func appendToSnapshot(followers newFollowers: [Follower]) {
-        followers.append(contentsOf: newFollowers)
+    private func updateSnapshot(with newFollowers: [Follower]) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Follower>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(followers)
-        self.dataSource.apply(snapshot, animatingDifferences: true)
+        snapshot.appendItems(newFollowers)
+        DispatchQueue.main.async {
+            self.dataSource.apply(snapshot, animatingDifferences: true)
+        }
     }
 }
 // MARK: - Collection view delegate
@@ -145,7 +148,31 @@ extension FollowersListVC: UICollectionViewDelegate {
         }
     }
 }
+// MARK: - Search Controller Setup
+extension FollowersListVC: UISearchResultsUpdating, UISearchBarDelegate {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let filter = searchController.searchBar.text, !filter.isEmpty else {
+            return
+        }
+        let filteredFollowers = followers.filter {
+            return $0.login.containsCaseInsensitive(filter)
+        }
+        updateSnapshot(with: filteredFollowers)
+    }
+    func setupSearchController() {
+        let searchController = UISearchController()
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.delegate = self
+        searchController.searchBar.placeholder = "Search followers..."
+        navigationItem.searchController = searchController
+    }
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        updateSnapshot(with: followers)
+    }
+}
 
 #Preview {
-    FollowersListVC()
+    let followersListVC = FollowersListVC()
+    followersListVC.username = "killlilwinters"
+    return followersListVC
 }
