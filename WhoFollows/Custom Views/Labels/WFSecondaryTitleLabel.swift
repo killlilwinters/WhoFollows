@@ -1,34 +1,32 @@
 //
-//  WFTitleLabel.swift
+//  WFSecondaryTitleLabel.swift
 //  WhoFollows
 //
-//  Created by Maks Winters on 01.02.2025.
+//  Created by Maks Winters on 20.02.2025.
 //
 
 import UIKit
 
-final class WFTitleLabel: UILabel {
+class WFSecondaryTitleLabel: UILabel {
 
     private override init(frame: CGRect) {
         super.init(frame: frame)
-        setupLabel()
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    init(textAlignment: NSTextAlignment, fontSize: CGFloat) {
+    init(size: CGFloat) {
         super.init(frame: .zero)
-        self.textAlignment = textAlignment
-        self.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .headline), size: fontSize)
+        font = UIFont.systemFont(ofSize: size, weight: .medium)
         setupLabel()
     }
     private func setupLabel() {
-        textColor = .label
-        adjustsFontSizeToFitWidth = false
+        textColor = .secondaryLabel
+        adjustsFontSizeToFitWidth = true
         minimumScaleFactor = 0.9
         lineBreakMode = .byTruncatingTail
-        numberOfLines = 1
         translatesAutoresizingMaskIntoConstraints = false
     }
+
 }

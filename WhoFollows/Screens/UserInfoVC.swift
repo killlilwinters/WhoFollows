@@ -9,7 +9,9 @@ import UIKit
 
 final class UserInfoVC: UIViewController {
     // MARK: - Private Property
-    private var follower: Follower?
+    private let headerView = UIView()
+    private var follower: Follower!
+    private let networkManager = NetworkManager.shared
     // MARK: - UI Elements
     // MARK: - Initializers
     init(follower: Follower) {
@@ -23,6 +25,7 @@ final class UserInfoVC: UIViewController {
     // MARK: - Override Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        getUser()
         setupView()
     }
 }
@@ -32,7 +35,22 @@ extension UserInfoVC {
     @objc func dismissVC() {
         dismiss(animated: true)
     }
-    func pushFollowersListVC() {
+    func getUser() {
+        networkManager.makeRequest(for: follower.login) { [weak self] (result: Result<User, NetworkError>) in
+            guard let self = self else { return }
+            switch result {
+            case .success(let user):
+                DispatchQueue.main.async {
+                    self.add(childVC: WFUserInfoHeaderVC(user: user), to: self.headerView)
+                }
+            case .failure(let error):
+                presentWFAlertVCOnMainThread(
+                    title: "Something went wrong...",
+                    message: error.rawValue,
+                    buttonTitle: "OK"
+                )
+            }
+        }
     }
 }
 // MARK: - Setting Views
@@ -57,12 +75,28 @@ extension UserInfoVC {
 // MARK: - Setting
 extension UserInfoVC {
     func addSubViews() {
+        view.addSubview(headerView)
     }
 }
 
 // MARK: - Layout
 extension UserInfoVC {
     func setupLayout() {
-        NSLayoutConstraint.activate([])
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
     }
+    func add(childVC: UIViewController, to containerView: UIView) {
+        addChild(childVC)
+        containerView.addSubview(childVC.view)
+        childVC.view.frame = containerView.bounds
+        childVC.didMove(toParent: self)
+    }
+}
+
+#Preview {
+    UserInfoVC(follower: Follower(login: "123", avatarUrl: "123.com"))
 }

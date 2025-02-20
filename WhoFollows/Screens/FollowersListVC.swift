@@ -47,10 +47,12 @@ final class FollowersListVC: UIViewController, DataLoadingView {
 extension FollowersListVC {
     private func getFollowers() {
         showLoadingView()
-        networkManager.getFollowers(for: username, page: page) { [weak self] result in
-            // Check if self is nil
+        networkManager.makeRequest(
+            for: username,
+            page: page
+        ) { [weak self] (result: Result<[Follower], NetworkError>) in
+            self?.dismissLoadingView()
             guard let self = self else { return }
-                self.dismissLoadingView()
             switch result {
             case .success(let followers):
                 checkIfHasMoreFollowers(followers)
@@ -124,7 +126,13 @@ extension FollowersListVC {
     private func updateSnapshot(with newFollowers: [Follower]) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Follower>()
         snapshot.appendSections([.main])
-        snapshot.appendItems(newFollowers)
+        DispatchQueue.main.async {
+            if self.isFiltering {
+                snapshot.appendItems(newFollowers)
+            } else {
+                snapshot.appendItems(self.followers)
+            }
+        }
         DispatchQueue.main.async {
             self.dataSource.apply(snapshot, animatingDifferences: true)
         }
@@ -153,12 +161,12 @@ extension FollowersListVC: UICollectionViewDelegate {
     }
 }
 // MARK: - Search Controller Setup
-extension FollowersListVC: UISearchResultsUpdating, UISearchBarDelegate {
+extension FollowersListVC: SearchControllerMethods {
     func updateSearchResults(for searchController: UISearchController) {
-        isFiltering = true
         guard let filter = searchController.searchBar.text, !filter.isEmpty else {
             return
         }
+        isFiltering = true
         filteredFollowers = followers.filter {
             return $0.login.containsCaseInsensitive(filter)
         }

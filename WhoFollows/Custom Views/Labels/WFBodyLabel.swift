@@ -9,16 +9,17 @@ import UIKit
 
 final class WFBodyLabel: UILabel {
 
-    override init(frame: CGRect) {
+    private override init(frame: CGRect) {
         super.init(frame: frame)
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    init(textAlignment: NSTextAlignment) {
+    init(textAlignment: NSTextAlignment, numberOfLines: Int) {
         super.init(frame: .zero)
         self.textAlignment = textAlignment
+        self.numberOfLines = numberOfLines
         setupLabel()
     }
     private func setupLabel() {

@@ -17,7 +17,7 @@ final class WFAlertVC: UIViewController {
         return containerView
     }()
     private let titleLabel = WFTitleLabel(textAlignment: .center, fontSize: 25)
-    private let messageLabel = WFBodyLabel(textAlignment: .center)
+    private let messageLabel = WFBodyLabel(textAlignment: .center, numberOfLines: 3)
     private let button = WFGenericButtonVC(text: "OK", color: .systemOrange)
     private var vStack: UIStackView = WFStack(axis: .vertical, spacing: 20)
     // MARK: - Public Property
@@ -72,14 +72,13 @@ extension WFAlertVC {
         // Other
 //        containerView.addSubview(button)
         messageLabel.text = message ?? "Unable to complete request..."
-        messageLabel.numberOfLines = 3
         containerView.addSubview(vStack)
     }
 }
 
 // MARK: - Layout
 extension WFAlertVC {
-    func setupLayout() {
+    private func setupLayout() {
         // Container view
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: vStack.topAnchor),

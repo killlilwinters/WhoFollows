@@ -15,4 +15,5 @@ enum NetworkError: String, Error {
     case e403 = "Forbidden."
     case e404 = "User not found..."
     case e500to599 = "Internal Server Error"
+    case appsLogicError = "Internal App's Logic Error"
 }
