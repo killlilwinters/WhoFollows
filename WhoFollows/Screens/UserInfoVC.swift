@@ -11,7 +11,7 @@ final class UserInfoVC: UIViewController {
     var bounds: CGRect = .zero
     // MARK: - Private Property
     private var user: User?
-    private let headerView = UIView()
+    private let userHeaderView = WFUserInfoHeaderVC()
     private var follower: Follower!
     private let networkManager = NetworkManager.shared
     // Collection View
@@ -45,10 +45,10 @@ extension UserInfoVC {
         networkManager.makeRequest(for: follower.login) { [weak self] (result: Result<User, NetworkError>) in
             guard let self = self else { return }
             switch result {
-            case .success(let user): break
-//                DispatchQueue.main.async {
-//                    self.add(childVC: WFUserInfoHeaderVC(user: user), to: self.headerView)
-//                }
+            case .success(let user):
+                DispatchQueue.main.async {
+                    self.setupViewContents(with: user)
+                }
             case .failure(let error):
                 presentWFAlertVCOnMainThread(
                     title: "Something went wrong...",
@@ -71,7 +71,11 @@ extension UserInfoVC {
             userInfoPiece
         ])
     }
-    func setupDoneButton() {
+    private func setupViewContents(with user: User) {
+        self.user = user
+        userHeaderView.setUser(user)
+    }
+    private func setupDoneButton() {
         let doneButton = UIBarButtonItem(
             barButtonSystemItem: .done,
             target: self,
@@ -125,7 +129,7 @@ extension UserInfoVC {
             ) as? WFHeaderReusableView else {
                 fatalError("Could not dequeue WFHeaderReusableView")
             }
-            header.addChildVC(childVC: WFUserInfoHeaderVC(user: killlilwinters), parentVC: self)
+            header.addChildVC(childVC: self.userHeaderView, parentVC: self)
             return header
         }
     }
@@ -149,8 +153,8 @@ extension UserInfoVC: UICollectionViewDelegateFlowLayout {
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
         let screenHeight = UIScreen.main.bounds.height
-                let headerHeight = max(180, min(screenHeight * 0.36, 265))
-                return CGSize(width: collectionView.bounds.width, height: headerHeight)
+        let headerHeight = max(180, min(screenHeight * 0.36, 265))
+        return CGSize(width: collectionView.bounds.width, height: headerHeight)
     }
 }
 #Preview {

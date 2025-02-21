@@ -9,7 +9,7 @@ import UIKit
 
 final class WFUserInfoHeaderVC: UIViewController {
     // MARK: - Private Property
-    private var user: User!
+    private var user: User?
     // Labels
     private let usernameLabel = WFTitleLabel(textAlignment: .left, fontSize: 35)
     private let nameLabel = WFSecondaryTitleLabel(fontSize: 20)
@@ -28,9 +28,8 @@ final class WFUserInfoHeaderVC: UIViewController {
     // Collected subviews
     private var subviews: [UIView]!
     // MARK: - Initializers
-    init(user: User!) {
+    init() {
         super.init(nibName: nil, bundle: nil)
-        self.user = user
         self.subviews = [
             avatarImageView,
             bioLabel,
@@ -63,12 +62,16 @@ extension WFUserInfoHeaderVC {
         addSubViews()
         setupLayout()
         setupUserInfo()
-        setupImageViews()
+        setupPinSystemImageView()
     }
 }
 
 // MARK: - Setting
 extension WFUserInfoHeaderVC {
+    func setUser(_ user: User) {
+        self.user = user
+        setupUserInfo()
+    }
     private func addSubViews() {
         subviews.forEach { view.addSubview($0) }
         hStack.addArrangedSubview(locationImageView)
@@ -76,14 +79,13 @@ extension WFUserInfoHeaderVC {
         [usernameLabel, nameLabel, hStack].forEach { vStack.addArrangedSubview($0) }
     }
     private func setupUserInfo() {
-        usernameLabel.text = user.login
-        nameLabel.text = user.name ?? ""
-        locationLabel.text = user.location ?? " -"
-        bioLabel.text = user.bio ?? ""
+        usernameLabel.text = user?.login ?? "No content..."
+        nameLabel.text = user?.name ?? "This user hasn't set a name."
+        locationLabel.text = user?.location ?? " -"
+        bioLabel.text = user?.bio ?? "This user hasn't set a bio."
+        avatarImageView.downloadImage(from: user?.avatarUrl ?? "")
     }
-    private func setupImageViews() {
-        // Avatar image view
-        avatarImageView.downloadImage(from: user.avatarUrl)
+    private func setupPinSystemImageView() {
         // Location systemImage view
         locationImageView.tintColor = .secondaryLabel
         locationImageView.contentMode = .scaleAspectFit
@@ -100,14 +102,15 @@ extension WFUserInfoHeaderVC {
             avatarImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
             avatarImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.35),
             avatarImageView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.35),
-            avatarImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 10)
+            avatarImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: padding)
         ])
         NSLayoutConstraint.activate([
             vStack.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             vStack.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: padding)
         ])
         NSLayoutConstraint.activate([
-            usernameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5)
+            usernameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5),
+            nameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5)
         ])
         let paddingVertical = view.bounds.height / 25
         NSLayoutConstraint.activate([
@@ -115,8 +118,10 @@ extension WFUserInfoHeaderVC {
             bioLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: widthConstraintMultiplier),
             bioLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
+        let screenHeight = UIScreen.main.bounds.height
+        let headerHeight = max(180, min(screenHeight * 0.35, 260))
         NSLayoutConstraint.activate([
-            separator.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: padding),
+            separator.topAnchor.constraint(equalTo: view.topAnchor, constant: headerHeight),
             separator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             separator.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: widthConstraintMultiplier)
         ])
@@ -124,5 +129,7 @@ extension WFUserInfoHeaderVC {
 }
 
 #Preview {
-    WFUserInfoHeaderVC(user: killlilwinters)
+    let headerView = WFUserInfoHeaderVC()
+    headerView.setUser(killlilwinters)
+    return headerView
 }
