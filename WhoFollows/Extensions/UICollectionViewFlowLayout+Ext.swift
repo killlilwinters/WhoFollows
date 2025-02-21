@@ -14,6 +14,7 @@ extension UICollectionViewFlowLayout {
     func setupCustomFlowLayout(numOfColumns: CGFloat,
                                itemSpacing: CGFloat = 10,
                                padding: CGFloat = 12,
+                               addToHeight: CGFloat = 0,
                                view: UIView
     ) -> UICollectionViewFlowLayout {
         guard numOfColumns > 1 else {
@@ -25,7 +26,7 @@ extension UICollectionViewFlowLayout {
         // Item setup
         let itemWidth = availableWidth / numOfColumns
         self.allAroundSectionInset(padding: padding)
-        self.itemSize = CGSize(width: itemWidth, height: itemWidth + 50)
+        self.itemSize = CGSize(width: itemWidth, height: itemWidth + addToHeight)
         return self
     }
 }

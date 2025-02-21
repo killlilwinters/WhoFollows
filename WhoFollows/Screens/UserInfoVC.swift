@@ -8,10 +8,16 @@
 import UIKit
 
 final class UserInfoVC: UIViewController {
+    var bounds: CGRect = .zero
     // MARK: - Private Property
+    private var user: User?
     private let headerView = UIView()
     private var follower: Follower!
     private let networkManager = NetworkManager.shared
+    // Collection View
+    enum Section { case main }
+    private var collectionView: UICollectionView!
+    private var dataSource: UICollectionViewDiffableDataSource<Section, UserInfoPiece>!
     // MARK: - UI Elements
     // MARK: - Initializers
     init(follower: Follower) {
@@ -39,10 +45,10 @@ extension UserInfoVC {
         networkManager.makeRequest(for: follower.login) { [weak self] (result: Result<User, NetworkError>) in
             guard let self = self else { return }
             switch result {
-            case .success(let user):
-                DispatchQueue.main.async {
-                    self.add(childVC: WFUserInfoHeaderVC(user: user), to: self.headerView)
-                }
+            case .success(let user): break
+//                DispatchQueue.main.async {
+//                    self.add(childVC: WFUserInfoHeaderVC(user: user), to: self.headerView)
+//                }
             case .failure(let error):
                 presentWFAlertVCOnMainThread(
                     title: "Something went wrong...",
@@ -56,11 +62,14 @@ extension UserInfoVC {
 // MARK: - Setting Views
 extension UserInfoVC {
     func setupView() {
-        view.backgroundColor = .systemBackground
         title = follower?.login
         setupDoneButton()
+        setupCollectionView()
+        setupDataSource()
         addSubViews()
-        setupLayout()
+        updateSnapshot(with: [
+            userInfoPiece
+        ])
     }
     func setupDoneButton() {
         let doneButton = UIBarButtonItem(
@@ -75,28 +84,75 @@ extension UserInfoVC {
 // MARK: - Setting
 extension UserInfoVC {
     func addSubViews() {
-        view.addSubview(headerView)
+        view.addSubview(collectionView)
+    }
+    private func setupCollectionView() {
+        let flowLayout = UICollectionViewFlowLayout().setupCustomFlowLayout(
+            numOfColumns: 2,
+            view: view
+        )
+        collectionView = UICollectionView(
+            frame: view.bounds,
+            collectionViewLayout: flowLayout
+        )
+        collectionView.delegate = self
+        collectionView.backgroundColor = .systemBackground
+        collectionView.register(UserInfoCell.self, forCellWithReuseIdentifier: UserInfoCell.reuseId)
+        collectionView.register(
+            WFHeaderReusableView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: WFHeaderReusableView.reuseId
+        )
+    }
+    private func setupDataSource() {
+        dataSource = UICollectionViewDiffableDataSource<Section, UserInfoPiece>(
+            collectionView: collectionView
+        ) { collectionView, indexPath, userInfoPiece in
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: UserInfoCell.reuseId,
+                for: indexPath
+            ) as? UserInfoCell else {
+                fatalError("Could not create a new cell for User")
+            }
+            cell.set(userInfoPiece: userInfoPiece)
+            return cell
+        }
+        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+            guard let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: WFHeaderReusableView.reuseId,
+                for: indexPath
+            ) as? WFHeaderReusableView else {
+                fatalError("Could not dequeue WFHeaderReusableView")
+            }
+            header.addChildVC(childVC: WFUserInfoHeaderVC(user: killlilwinters), parentVC: self)
+            return header
+        }
+    }
+    private func updateSnapshot(with newUserInfoPieces: [UserInfoPiece]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, UserInfoPiece>()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(newUserInfoPieces, toSection: .main)
+        DispatchQueue.main.async {
+            self.dataSource.apply(snapshot, animatingDifferences: true)
+        }
     }
 }
 
 // MARK: - Layout
-extension UserInfoVC {
-    func setupLayout() {
-        headerView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-    }
-    func add(childVC: UIViewController, to containerView: UIView) {
-        addChild(childVC)
-        containerView.addSubview(childVC.view)
-        childVC.view.frame = containerView.bounds
-        childVC.didMove(toParent: self)
+extension UserInfoVC { }
+// MARK: - Collection View
+extension UserInfoVC: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        let screenHeight = UIScreen.main.bounds.height
+                let headerHeight = max(180, min(screenHeight * 0.36, 265))
+                return CGSize(width: collectionView.bounds.width, height: headerHeight)
     }
 }
-
 #Preview {
     UserInfoVC(follower: Follower(login: "123", avatarUrl: "123.com"))
 }

@@ -98,6 +98,7 @@ extension FollowersListVC {
         // FlowLayout
         let flowLayout = UICollectionViewFlowLayout().setupCustomFlowLayout(
             numOfColumns: 2,
+            addToHeight: 50,
             view: view
         )
         // Collection View

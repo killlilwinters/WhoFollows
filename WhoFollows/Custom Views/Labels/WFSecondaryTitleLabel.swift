@@ -16,9 +16,9 @@ class WFSecondaryTitleLabel: UILabel {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    init(size: CGFloat) {
+    init(fontSize: CGFloat) {
         super.init(frame: .zero)
-        font = UIFont.systemFont(ofSize: size, weight: .medium)
+        font = UIFont.systemFont(ofSize: fontSize, weight: .medium)
         setupLabel()
     }
     private func setupLabel() {

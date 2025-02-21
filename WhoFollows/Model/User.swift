@@ -5,7 +5,7 @@
 //  Created by Maks Winters on 05.02.2025.
 //
 
-struct User: Codable {
+struct User: Codable, Hashable {
     let login: String
     let avatarUrl: String
     let htmlUrl: String

@@ -18,13 +18,19 @@ let killlilwinters = User(
     avatarUrl: "https://avatars.githubusercontent.com/u/139014119?v=4",
     htmlUrl: "https://github.com/killlilwinters",
     name: "Max Winters",
-    bio: "👨‍💻 Software Engineer specializing in Swift, UIkit, SwiftUI and general iOS development. Also interested in Firebase development. 📲👨‍💻",
+    bio: "👨‍💻 " + String.init(repeating: "Swift ", count: 20) + "👨‍💻",
     followers: 2,
     following: 13,
     createdAt: "2023-07-08T20:37:26Z",
     location: "Kharkiv, Ukraine",
     publicRepos: 39,
     publicGists: 0
+)
+let userInfoPiece = UserInfoPiece(
+    icon: UIImage(systemName: "square.3.layers.3d.down.backward"),
+    value: "53",
+    title: "Repositories",
+    subtitle: "View more..."
 )
 
 // swiftlint:enable line_length
