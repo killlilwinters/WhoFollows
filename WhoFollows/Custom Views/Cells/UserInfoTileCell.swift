@@ -1,5 +1,5 @@
 //
-//  UserInfoCell.swift
+//  UserInfoTileCell.swift
 //  WhoFollows
 //
 //  Created by Maks Winters on 21.02.2025.
@@ -7,10 +7,11 @@
 
 import UIKit
 
-final class UserInfoCell: UICollectionViewCell {
+final class UserInfoTileCell: UICollectionViewCell {
     // MARK: - Static properties
     static let reuseId = "UserInfoCell"
     // MARK: - Private properties
+    private var tileColor = UIColor(resource: .followerCellBackground).cgColor
     // MARK: - Private subviews
     private let imageView = UIImageView()
     private let valueLabel = WFTitleLabel(textAlignment: .left, fontSize: 50)
@@ -34,25 +35,38 @@ final class UserInfoCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .systemOrange
         imageView.transform = CGAffineTransform(scaleX: 2, y: 2)
+        imageView.setContentCompressionResistancePriority(.required, for: .horizontal)
         // Rest
         valueLabel.text = userInfoPiece.value
         titleLabel.text = userInfoPiece.title
         subtitleLabel.text = userInfoPiece.subtitle
+        // Tile view setting
+        tileColor = userInfoPiece.requiredTileColor
+        updateAppearance()
+    }
+}
+
+// MARK: - Additional Settings
+extension UserInfoTileCell {
+    private func setAdditionalSettings() {
+        valueLabel.adjustsFontSizeToFitWidth = true
+        valueLabel.minimumScaleFactor = 0.5
     }
 }
 
 // MARK: - Setting Views
-extension UserInfoCell {
+extension UserInfoTileCell {
     private func setupCell() {
         layer.cornerRadius = 30
         layer.backgroundColor = UIColor(resource: .followerCellBackground).cgColor
         addSubViews()
         setupLayout()
+        setAdditionalSettings()
     }
 }
 
 // MARK: - Setting
-extension UserInfoCell {
+extension UserInfoTileCell {
     private func addSubViews() {
 //        addSubview(imageView)
         addSubview(vStack)
@@ -67,7 +81,7 @@ extension UserInfoCell {
 }
 
 // MARK: - Layout
-extension UserInfoCell {
+extension UserInfoTileCell {
     private func setupLayout() {
         NSLayoutConstraint.activate([
             vStack.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -82,17 +96,20 @@ extension UserInfoCell {
         NSLayoutConstraint.activate([
             subtitleLabel.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8)
         ])
+        NSLayoutConstraint.activate([
+            valueLabel.trailingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: -20)
+        ])
     }
 }
 // MARK: - Listen to theme change
-extension UserInfoCell: ManualTheming {
+extension UserInfoTileCell: ManualTheming {
     func updateAppearance() {
-        layer.backgroundColor = UIColor(resource: .followerCellBackground).cgColor
+        layer.backgroundColor = tileColor
     }
 }
 
 #Preview {
-    let view = UserInfoCell()
-    view.set(userInfoPiece: userInfoPiece)
+    let view = UserInfoTileCell()
+    view.set(userInfoPiece: userInfoPieceExample)
     return view
 }

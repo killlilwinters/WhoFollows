@@ -18,7 +18,7 @@ final class WFUserInfoHeaderVC: UIViewController {
     // Images
     private let avatarImageView = WFAvatarImageView(frame: .zero)
     private let locationImageView = UIImageView(
-        image: UIImage(systemName: SFSymbols.locationMark)
+        image: WFSymbols.locationMarkIcon.image
     )
     // Stacks
     private let vStack = WFStack(axis: .vertical, spacing: 12, alignment: .leading)
@@ -110,7 +110,8 @@ extension WFUserInfoHeaderVC {
         ])
         NSLayoutConstraint.activate([
             usernameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5),
-            nameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5)
+            nameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5),
+            locationLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5)
         ])
         let paddingVertical = view.bounds.height / 25
         NSLayoutConstraint.activate([

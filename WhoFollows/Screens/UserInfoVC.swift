@@ -8,17 +8,15 @@
 import UIKit
 
 final class UserInfoVC: UIViewController {
-    var bounds: CGRect = .zero
-    // MARK: - Private Property
-    private var user: User?
-    private let userHeaderView = WFUserInfoHeaderVC()
-    private var follower: Follower!
-    private let networkManager = NetworkManager.shared
     // Collection View
     enum Section { case main }
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, UserInfoPiece>!
+    // MARK: - Private Property
+    private var follower: Follower!
+    private let networkManager = NetworkManager.shared
     // MARK: - UI Elements
+    private let userHeaderView = WFUserInfoHeaderVC()
     // MARK: - Initializers
     init(follower: Follower) {
         super.init(nibName: nil, bundle: nil)
@@ -35,7 +33,15 @@ final class UserInfoVC: UIViewController {
         setupView()
     }
 }
-
+#if DEBUG
+// MARK: - DEBUG
+extension UserInfoVC {
+    func setUser(_ user: User) {
+        self.setupViewContents(with: user)
+        self.setupTiles(with: user)
+    }
+}
+#endif
 // MARK: - Logic
 extension UserInfoVC {
     @objc func dismissVC() {
@@ -46,9 +52,12 @@ extension UserInfoVC {
             guard let self = self else { return }
             switch result {
             case .success(let user):
+// #if !DEBUG
                 DispatchQueue.main.async {
                     self.setupViewContents(with: user)
+                    self.setupTiles(with: user)
                 }
+// #endif
             case .failure(let error):
                 presentWFAlertVCOnMainThread(
                     title: "Something went wrong...",
@@ -67,12 +76,8 @@ extension UserInfoVC {
         setupCollectionView()
         setupDataSource()
         addSubViews()
-        updateSnapshot(with: [
-            userInfoPiece
-        ])
     }
     private func setupViewContents(with user: User) {
-        self.user = user
         userHeaderView.setUser(user)
     }
     private func setupDoneButton() {
@@ -82,6 +87,23 @@ extension UserInfoVC {
             action: #selector(dismissVC)
         )
         navigationItem.rightBarButtonItem = doneButton
+    }
+    private func setupTiles(with user: User) {
+        let tiles = [
+            UserInfoPiece(
+                title: "Followers",
+                icon: .followersCountIcon,
+                value: user.followers.description,
+                color: UIColor.systemPink.withAlphaComponent(0.5)
+            ),
+            UserInfoPiece(
+                title: "Following",
+                icon: .followingCountIcon,
+                value: user.following.description,
+                color: UIColor.systemGreen.withAlphaComponent(0.5)
+            )
+        ]
+        updateSnapshot(with: tiles)
     }
 }
 
@@ -101,7 +123,7 @@ extension UserInfoVC {
         )
         collectionView.delegate = self
         collectionView.backgroundColor = .systemBackground
-        collectionView.register(UserInfoCell.self, forCellWithReuseIdentifier: UserInfoCell.reuseId)
+        collectionView.register(UserInfoTileCell.self, forCellWithReuseIdentifier: UserInfoTileCell.reuseId)
         collectionView.register(
             WFHeaderReusableView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -113,9 +135,9 @@ extension UserInfoVC {
             collectionView: collectionView
         ) { collectionView, indexPath, userInfoPiece in
             guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: UserInfoCell.reuseId,
+                withReuseIdentifier: UserInfoTileCell.reuseId,
                 for: indexPath
-            ) as? UserInfoCell else {
+            ) as? UserInfoTileCell else {
                 fatalError("Could not create a new cell for User")
             }
             cell.set(userInfoPiece: userInfoPiece)
@@ -158,5 +180,7 @@ extension UserInfoVC: UICollectionViewDelegateFlowLayout {
     }
 }
 #Preview {
-    UserInfoVC(follower: Follower(login: "123", avatarUrl: "123.com"))
+    let userInfoVC = UserInfoVC(follower: Follower(login: "killlilwinters", avatarUrl: "123.com"))
+    userInfoVC.setUser(killlilwinters)
+    return userInfoVC
 }

@@ -5,13 +5,30 @@
 //  Created by Maks Winters on 20.02.2025.
 //
 import UIKit
-// swiftlint:disable line_length
+/// swiftlint:disable line_length
 
 typealias SearchControllerMethods = UISearchResultsUpdating & UISearchBarDelegate
 // MARK: - Enums
-enum SFSymbols {
-    static let locationMark = "mappin.and.ellipse.circle"
+enum WFSymbols {
+    case locationMarkIcon
+    case followersCountIcon
+    case followingCountIcon
+    case repositoriesIcon
+
+    var image: UIImage {
+        switch self {
+        case .locationMarkIcon:
+            return UIImage(systemName: "mappin.and.ellipse.circle")!
+        case .followersCountIcon:
+            return UIImage(systemName: "person.2.fill")!
+        case .followingCountIcon:
+            return UIImage(systemName: "person.crop.circle")!
+        case .repositoriesIcon:
+            return UIImage(systemName: "square.3.layers.3d.down.backward")!
+        }
+    }
 }
+
 // MARK: - Preview constants
 let killlilwinters = User(
     login: "killlilwinters",
@@ -19,18 +36,18 @@ let killlilwinters = User(
     htmlUrl: "https://github.com/killlilwinters",
     name: "Max Winters",
     bio: "👨‍💻 " + String.init(repeating: "Swift ", count: 20) + "👨‍💻",
-    followers: 2,
+    followers: 24125,
     following: 13,
     createdAt: "2023-07-08T20:37:26Z",
     location: "Kharkiv, Ukraine",
     publicRepos: 39,
     publicGists: 0
 )
-let userInfoPiece = UserInfoPiece(
-    icon: UIImage(systemName: "square.3.layers.3d.down.backward"),
-    value: "53",
+let userInfoPieceExample = UserInfoPiece(
     title: "Repositories",
+    icon: .repositoriesIcon,
+    value: "53",
     subtitle: "View more..."
 )
 
-// swiftlint:enable line_length
+/// swiftlint:enable line_length
