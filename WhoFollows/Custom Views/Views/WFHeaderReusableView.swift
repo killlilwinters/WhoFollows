@@ -7,7 +7,7 @@
 
 import UIKit
 
-class WFHeaderReusableView: UICollectionReusableView {
+final class WFHeaderReusableView: UICollectionReusableView {
     let headerView = UIView()
     static let reuseId = "WFHeaderReusableView"
     override init(frame: CGRect) {

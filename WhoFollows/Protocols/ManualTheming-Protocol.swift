@@ -9,11 +9,11 @@
 
 import UIKit
 
-protocol ManualTheming: UIView {
+protocol ManualTheming: AnyObject {
     func updateAppearance()
 }
 
-extension ManualTheming {
+extension ManualTheming where Self: UIView {
     func registerForApperanceChanges() {
         DispatchQueue.main.async {
             self.registerForTraitChanges(
@@ -21,6 +21,14 @@ extension ManualTheming {
                 handler: { (self: Self, _: UITraitCollection) in
                     self.updateAppearance()
                 })
+        }
+    }
+}
+
+extension ManualTheming where Self: UIViewController {
+    func registerForApperanceChanges() {
+        DispatchQueue.main.async {
+            self.registerForApperanceChanges()
         }
     }
 }

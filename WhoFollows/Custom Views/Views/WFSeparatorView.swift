@@ -15,7 +15,6 @@ class WFSeparatorView: UIView {
         backgroundColor = .quaternaryLabel
         // Constraints
         heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {

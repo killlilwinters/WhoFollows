@@ -1,33 +1,33 @@
 //
-//  UserInfoPiece.swift
+//  UserTileData.swift
 //  WhoFollows
 //
 //  Created by Maks Winters on 21.02.2025.
 //
 import UIKit
 
-struct UserInfoPiece {
+struct UserTileData {
     // MARK: - Properties
     var title: String
+    var subtitle: String?
     var icon: UIImage
     var value: String
-    var subtitle: String?
-    var requiredTileColor: CGColor
+    var tileColor: UIColor
     // Action
     private(set) var action: (() -> Void)?
     // MARK: - Initializers
     init(
         title: String,
+        subtitle: String? = nil,
         icon: WFSymbols,
         value: String,
-        subtitle: String? = nil,
-        color: UIColor = UIColor(resource: .followerCellBackground)
+        tileColor: UIColor = UIColor(resource: .followerCellBackground)
     ) {
         self.title = title
+        self.subtitle = subtitle
         self.icon = icon.image
         self.value = value
-        self.subtitle = subtitle
-        self.requiredTileColor = color.cgColor
+        self.tileColor = tileColor
     }
     // MARK: - Methods
     mutating func setAction(_ action: (() -> Void)?) {
@@ -36,8 +36,8 @@ struct UserInfoPiece {
 }
 
 // MARK: - Hashable conformance
-extension UserInfoPiece: Hashable {
-    static func == (lhs: UserInfoPiece, rhs: UserInfoPiece) -> Bool {
+extension UserTileData: Hashable {
+    static func == (lhs: UserTileData, rhs: UserTileData) -> Bool {
         lhs.title == rhs.title && lhs.value == rhs.value && lhs.subtitle == rhs.subtitle
     }
     func hash(into hasher: inout Hasher) {

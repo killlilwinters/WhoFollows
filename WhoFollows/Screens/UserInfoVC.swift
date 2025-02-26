@@ -11,7 +11,7 @@ final class UserInfoVC: UIViewController {
     // Collection View
     enum Section { case main }
     private var collectionView: UICollectionView!
-    private var dataSource: UICollectionViewDiffableDataSource<Section, UserInfoPiece>!
+    private var dataSource: UICollectionViewDiffableDataSource<Section, UserTileData>!
     // MARK: - Private Property
     private var follower: Follower!
     private let networkManager = NetworkManager.shared
@@ -88,23 +88,6 @@ extension UserInfoVC {
         )
         navigationItem.rightBarButtonItem = doneButton
     }
-    private func setupTiles(with user: User) {
-        let tiles = [
-            UserInfoPiece(
-                title: "Followers",
-                icon: .followersCountIcon,
-                value: user.followers.description,
-                color: UIColor.systemPink.withAlphaComponent(0.5)
-            ),
-            UserInfoPiece(
-                title: "Following",
-                icon: .followingCountIcon,
-                value: user.following.description,
-                color: UIColor.systemGreen.withAlphaComponent(0.5)
-            )
-        ]
-        updateSnapshot(with: tiles)
-    }
 }
 
 // MARK: - Setting
@@ -131,7 +114,7 @@ extension UserInfoVC {
         )
     }
     private func setupDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, UserInfoPiece>(
+        dataSource = UICollectionViewDiffableDataSource<Section, UserTileData>(
             collectionView: collectionView
         ) { collectionView, indexPath, userInfoPiece in
             guard let cell = collectionView.dequeueReusableCell(
@@ -143,7 +126,8 @@ extension UserInfoVC {
             cell.set(userInfoPiece: userInfoPiece)
             return cell
         }
-        dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+        dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
+            guard let self = self else { fatalError("Error creating the header view") }
             guard let header = collectionView.dequeueReusableSupplementaryView(
                 ofKind: kind,
                 withReuseIdentifier: WFHeaderReusableView.reuseId,
@@ -155,8 +139,8 @@ extension UserInfoVC {
             return header
         }
     }
-    private func updateSnapshot(with newUserInfoPieces: [UserInfoPiece]) {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, UserInfoPiece>()
+    private func updateSnapshot(with newUserInfoPieces: [UserTileData]) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, UserTileData>()
         snapshot.appendSections([.main])
         snapshot.appendItems(newUserInfoPieces, toSection: .main)
         DispatchQueue.main.async {
@@ -165,8 +149,38 @@ extension UserInfoVC {
     }
 }
 
-// MARK: - Layout
-extension UserInfoVC { }
+// MARK: - Setting CollectionView tiles
+extension UserInfoVC {
+    private func setupTiles(with user: User) {
+        let tiles = [
+            UserTileData(
+                title: "Followers",
+                subtitle: "See more",
+                icon: .followersCountIcon,
+                value: user.followers.description,
+                tileColor: UIColor.systemPink.withAlphaComponent(0.6)
+            ),
+            UserTileData(
+                title: "Following",
+                subtitle: "See more",
+                icon: .followingCountIcon,
+                value: user.following.description,
+                tileColor: UIColor.systemGreen.withAlphaComponent(0.6)
+            ),
+            UserTileData(
+                title: "Gists",
+                icon: .followersCountIcon,
+                value: user.publicGists.description
+            ),
+            UserTileData(
+                title: "Repos",
+                icon: .repositoriesIcon,
+                value: user.publicRepos.description
+            )
+        ]
+        updateSnapshot(with: tiles)
+    }
+}
 // MARK: - Collection View
 extension UserInfoVC: UICollectionViewDelegateFlowLayout {
     func collectionView(
@@ -179,6 +193,7 @@ extension UserInfoVC: UICollectionViewDelegateFlowLayout {
         return CGSize(width: collectionView.bounds.width, height: headerHeight)
     }
 }
+
 #Preview {
     let userInfoVC = UserInfoVC(follower: Follower(login: "killlilwinters", avatarUrl: "123.com"))
     userInfoVC.setUser(killlilwinters)

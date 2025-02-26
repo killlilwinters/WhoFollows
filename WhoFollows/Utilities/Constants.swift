@@ -43,11 +43,11 @@ let killlilwinters = User(
     publicRepos: 39,
     publicGists: 0
 )
-let userInfoPieceExample = UserInfoPiece(
+let userInfoPieceExample = UserTileData(
     title: "Repositories",
+    subtitle: "View more...",
     icon: .repositoriesIcon,
-    value: "53",
-    subtitle: "View more..."
+    value: "53"
 )
 
 /// swiftlint:enable line_length
