@@ -17,6 +17,7 @@ final class UserInfoVC: UIViewController {
     private let networkManager = NetworkManager.shared
     // MARK: - UI Elements
     private let userHeaderView = WFUserInfoHeaderVC()
+    private let userFooterView = WFUserInfoFooterVC()
     // MARK: - Initializers
     init(follower: Follower) {
         super.init(nibName: nil, bundle: nil)
@@ -37,16 +38,23 @@ final class UserInfoVC: UIViewController {
 // MARK: - DEBUG
 extension UserInfoVC {
     func setUser(_ user: User) {
-        self.setupViewContents(with: user)
+        self.userHeaderView.setUser(user)
         self.setupTiles(with: user)
+        self.userFooterView.setUser(user)
     }
 }
 #endif
-// MARK: - Logic
+// MARK: - UIBarButtons
 extension UserInfoVC {
     @objc func dismissVC() {
         dismiss(animated: true)
     }
+    @objc func favoriteUser() {
+        // TODO: Implement
+    }
+}
+// MARK: - Logic
+extension UserInfoVC {
     func getUser() {
         networkManager.makeRequest(for: follower.login) { [weak self] (result: Result<User, NetworkError>) in
             guard let self = self else { return }
@@ -54,8 +62,9 @@ extension UserInfoVC {
             case .success(let user):
 // #if !DEBUG
                 DispatchQueue.main.async {
-                    self.setupViewContents(with: user)
+                    self.userHeaderView.setUser(user)
                     self.setupTiles(with: user)
+                    self.userFooterView.setUser(user)
                 }
 // #endif
             case .failure(let error):
@@ -76,9 +85,6 @@ extension UserInfoVC {
         setupCollectionView()
         setupDataSource()
         addSubViews()
-    }
-    private func setupViewContents(with user: User) {
-        userHeaderView.setUser(user)
     }
     private func setupDoneButton() {
         let doneButton = UIBarButtonItem(
@@ -112,8 +118,14 @@ extension UserInfoVC {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: WFHeaderReusableView.reuseId
         )
+        collectionView.register(
+            WFFooterReusableView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: WFFooterReusableView.reuseId
+        )
     }
     private func setupDataSource() {
+        // Setting up cells
         dataSource = UICollectionViewDiffableDataSource<Section, UserTileData>(
             collectionView: collectionView
         ) { collectionView, indexPath, userInfoPiece in
@@ -126,17 +138,34 @@ extension UserInfoVC {
             cell.set(userInfoPiece: userInfoPiece)
             return cell
         }
+        // Setting up the header view
         dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
             guard let self = self else { fatalError("Error creating the header view") }
-            guard let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: WFHeaderReusableView.reuseId,
-                for: indexPath
-            ) as? WFHeaderReusableView else {
-                fatalError("Could not dequeue WFHeaderReusableView")
+            // Dequeue Header
+            if kind == UICollectionView.elementKindSectionHeader {
+                guard let header = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: WFHeaderReusableView.reuseId,
+                    for: indexPath
+                ) as? WFHeaderReusableView else {
+                    fatalError("Could not dequeue WFHeaderReusableView as the header")
+                }
+                header.addChildVC(childVC: self.userHeaderView, parentVC: self)
+                return header
             }
-            header.addChildVC(childVC: self.userHeaderView, parentVC: self)
-            return header
+            // Dequeue Footer
+            if kind == UICollectionView.elementKindSectionFooter {
+                guard let footer = collectionView.dequeueReusableSupplementaryView(
+                    ofKind: kind,
+                    withReuseIdentifier: WFFooterReusableView.reuseId,
+                    for: indexPath
+                ) as? WFFooterReusableView else {
+                    fatalError("Could not dequeue WFFooterReusableView as the footer")
+                }
+                footer.addChildVC(childVC: self.userFooterView, parentVC: self)
+                return footer
+            }
+            return nil
         }
     }
     private func updateSnapshot(with newUserInfoPieces: [UserTileData]) {
@@ -191,6 +220,13 @@ extension UserInfoVC: UICollectionViewDelegateFlowLayout {
         let screenHeight = UIScreen.main.bounds.height
         let headerHeight = max(180, min(screenHeight * 0.36, 265))
         return CGSize(width: collectionView.bounds.width, height: headerHeight)
+    }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
+        return CGSize(width: collectionView.bounds.width, height: 70)
     }
 }
 
