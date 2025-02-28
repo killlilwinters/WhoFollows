@@ -7,67 +7,79 @@
 
 import UIKit
 
-final class FollowersListVC: UIViewController, DataLoadingView {
+class FollowersListVC: UIViewController, DataLoadingView {
+    // MARK: DiffableDS Enum
+    enum Section { case main }
+    
+    // Network Manager
+    private let networkManager = NetworkManager.shared
+    
     // Conform to DataLoadingView
     var containerView: UIView!
-    // MARK: DiffableDS Enum
-    enum Section {
-        case main
-    }
+    
     // MARK: Properties
-    private let networkManager = NetworkManager.shared
     var username: String!
-    private var page = 1
+    var page = 1
     private var hasMoreFollowers = true
+    
     // Followers and filtering
     private var isFiltering = false
     private var followers = [Follower]()
     private var filteredFollowers = [Follower]()
+    
     // MARK: Inits
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
+    
     // MARK: ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         // Display followers setup (has to go first)
         setupCollectionView()
         setupDataSource()
-        getFollowers()
+        getContent()
         // Setup
         setupView()
         setupSearchController()
         addSubViews()
     }
     override func viewWillAppear(_ animated: Bool) {
+        title = username + "'s followers"
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
+    
+    func getContent() {
+        showLoadingView()
+        
+        networkManager.makeFollowersRequest(for: username, page: page) { [weak self] result in
+            
+            guard let self = self else { return }
+            self.handleNetworkResult(result: result)
+            
+        }
+    }
+    
+    func handleNetworkResult(result: Result<[Follower], NetworkError>) {
+        self.dismissLoadingView()
+        switch result {
+        case .success(let followers):
+            checkIfHasMoreFollowers(followers)
+            self.followers.append(contentsOf: followers)
+            self.updateSnapshot(with: followers)
+            checkIfHasFollowers(followers)
+        case .failure(let error):
+            self.presentWFAlertVCOnMainThread(
+                title: "Something went wrong...",
+                message: error.rawValue,
+                buttonTitle: "OK"
+            )
+        }
+    }
+    
 }
 // MARK: - Logic
 extension FollowersListVC {
-    private func getFollowers() {
-        showLoadingView()
-        networkManager.makeRequest(
-            for: username,
-            page: page
-        ) { [weak self] (result: Result<[Follower], NetworkError>) in
-            self?.dismissLoadingView()
-            guard let self = self else { return }
-            switch result {
-            case .success(let followers):
-                checkIfHasMoreFollowers(followers)
-                self.followers.append(contentsOf: followers)
-                self.updateSnapshot(with: followers)
-                checkIfHasFollowers(followers)
-            case .failure(let error):
-                self.presentWFAlertVCOnMainThread(
-                    title: "Something went wrong...",
-                    message: error.rawValue,
-                    buttonTitle: "OK"
-                )
-            }
-        }
-    }
     private func checkIfHasFollowers(_: [Follower]) {
         if self.followers.isEmpty {
             let message = "This user doesn't seem to have any followers yet..."
@@ -111,6 +123,7 @@ extension FollowersListVC {
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseId)
     }
     private func setupDataSource() {
+        
         dataSource = UICollectionViewDiffableDataSource<Section, Follower>(
             collectionView: collectionView
         ) { collectionView, indexPath, follower in
@@ -120,6 +133,7 @@ extension FollowersListVC {
             ) as? FollowerCell else {
                 fatalError("Could not create new cell")
             }
+            
             cell.set(follower: follower)
             return cell
         }
@@ -127,6 +141,7 @@ extension FollowersListVC {
     private func updateSnapshot(with newFollowers: [Follower]) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Follower>()
         snapshot.appendSections([.main])
+        
         DispatchQueue.main.async {
             if self.isFiltering {
                 snapshot.appendItems(newFollowers)
@@ -134,6 +149,7 @@ extension FollowersListVC {
                 snapshot.appendItems(self.followers)
             }
         }
+        
         DispatchQueue.main.async {
             self.dataSource.apply(snapshot, animatingDifferences: true)
         }
@@ -142,14 +158,16 @@ extension FollowersListVC {
 // MARK: - Collection view delegate
 extension FollowersListVC: UICollectionViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let frameHeight = scrollView.frame.height
         if offsetY + frameHeight >= contentHeight {
             guard hasMoreFollowers else { return }
             page += 1
-            getFollowers()
+            getContent()
         }
+        
     }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // Getting the item

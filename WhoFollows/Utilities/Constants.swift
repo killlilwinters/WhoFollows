@@ -14,6 +14,7 @@ enum WFSymbols {
     case followersCountIcon
     case followingCountIcon
     case repositoriesIcon
+    case gistsIcon
 
     var image: UIImage {
         switch self {
@@ -25,6 +26,8 @@ enum WFSymbols {
             return UIImage(systemName: "person.crop.circle")!
         case .repositoriesIcon:
             return UIImage(systemName: "square.3.layers.3d.down.backward")!
+        case .gistsIcon:
+            return UIImage(systemName: "text.alignleft")!
         }
     }
 }

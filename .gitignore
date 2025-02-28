@@ -11,3 +11,6 @@ build/
 Packages/
 *.xcworkspace/xcuserdata/
 
+# SwiftLint config file
+.swiftlint.yml
+

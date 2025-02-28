@@ -38,7 +38,6 @@ extension SearchVC {
         let followersVC = FollowersListVC()
         let text = searchTextField.text ?? ""
         followersVC.username = text
-        followersVC.title = text
         navigationController?.pushViewController(followersVC, animated: true)
     }
 }

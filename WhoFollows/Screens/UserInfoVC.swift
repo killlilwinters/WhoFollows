@@ -18,6 +18,7 @@ final class UserInfoVC: UIViewController {
     // MARK: - UI Elements
     private let userHeaderView = WFUserInfoHeaderVC()
     private let userFooterView = WFUserInfoFooterVC()
+    private var userTileData = [UserTileData]()
     // MARK: - Initializers
     init(follower: Follower) {
         super.init(nibName: nil, bundle: nil)
@@ -55,8 +56,20 @@ extension UserInfoVC {
 }
 // MARK: - Logic
 extension UserInfoVC {
+    
+    private func pushFollowersListVC() {
+        let followersVC = FollowersListVC()
+        followersVC.username = follower.login
+        navigationController?.pushViewController(followersVC, animated: true)
+    }
+    private func pushFollowingListVC() {
+        let followingVC = FollowingListVC()
+        followingVC.username = follower.login
+        navigationController?.pushViewController(followingVC, animated: true)
+    }
+    
     func getUser() {
-        networkManager.makeRequest(for: follower.login) { [weak self] (result: Result<User, NetworkError>) in
+        networkManager.makeUserRequest(for: follower.login) { [weak self] (result: Result<User, NetworkError>) in
             guard let self = self else { return }
             switch result {
             case .success(let user):
@@ -76,6 +89,7 @@ extension UserInfoVC {
             }
         }
     }
+    
 }
 // MARK: - Setting Views
 extension UserInfoVC {
@@ -181,7 +195,7 @@ extension UserInfoVC {
 // MARK: - Setting CollectionView tiles
 extension UserInfoVC {
     private func setupTiles(with user: User) {
-        let tiles = [
+        userTileData = [
             UserTileData(
                 title: "Followers",
                 subtitle: "See more",
@@ -198,7 +212,7 @@ extension UserInfoVC {
             ),
             UserTileData(
                 title: "Gists",
-                icon: .followersCountIcon,
+                icon: .gistsIcon,
                 value: user.publicGists.description
             ),
             UserTileData(
@@ -207,26 +221,45 @@ extension UserInfoVC {
                 value: user.publicRepos.description
             )
         ]
-        updateSnapshot(with: tiles)
+        updateSnapshot(with: userTileData)
     }
 }
 // MARK: - Collection View
 extension UserInfoVC: UICollectionViewDelegateFlowLayout {
+    // Header size
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
+        
         let screenHeight = UIScreen.main.bounds.height
         let headerHeight = max(180, min(screenHeight * 0.36, 265))
         return CGSize(width: collectionView.bounds.width, height: headerHeight)
+        
     }
+    // Footer size
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
+        
         return CGSize(width: collectionView.bounds.width, height: 70)
+        
+    }
+    // Navigate on tap
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let item = userTileData[indexPath.item]
+        if item.title == "Followers" {
+            pushFollowersListVC()
+        }
+        
+        if item.title == "Following" {
+            pushFollowingListVC()
+        }
+        
     }
 }
 
