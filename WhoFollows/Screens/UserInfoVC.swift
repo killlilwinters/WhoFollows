@@ -6,6 +6,12 @@
 //
 
 import UIKit
+import SafariServices
+
+protocol UserInfoVCDelegate: AnyObject {
+    func didTapShareButton(for user: User)
+    func didTapSafariButton(for user: User)
+}
 
 final class UserInfoVC: UIViewController {
     // Collection View
@@ -95,6 +101,7 @@ extension UserInfoVC {
 extension UserInfoVC {
     func setupView() {
         title = follower?.login
+        userHeaderView.delegate = self
         setupDoneButton()
         setupCollectionView()
         setupDataSource()
@@ -106,7 +113,13 @@ extension UserInfoVC {
             target: self,
             action: #selector(dismissVC)
         )
+        let favoriteButton = UIBarButtonItem(
+            barButtonSystemItem: .save,
+            target: self,
+            action: #selector(favoriteUser)
+        )
         navigationItem.rightBarButtonItem = doneButton
+        navigationItem.leftBarButtonItem = favoriteButton
     }
 }
 
@@ -233,9 +246,7 @@ extension UserInfoVC: UICollectionViewDelegateFlowLayout {
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
         
-        let screenHeight = UIScreen.main.bounds.height
-        let headerHeight = max(180, min(screenHeight * 0.36, 265))
-        return CGSize(width: collectionView.bounds.width, height: headerHeight)
+        return CGSize(width: collectionView.bounds.width, height: userHeaderView.getHeaderHeight())
         
     }
     // Footer size
@@ -261,6 +272,32 @@ extension UserInfoVC: UICollectionViewDelegateFlowLayout {
         }
         
     }
+}
+
+extension UserInfoVC: UserInfoVCDelegate {
+    
+    func didTapShareButton(for user: User) {
+        let activityView = UIActivityViewController(
+            activityItems: [user.htmlUrl],
+            applicationActivities: nil
+        )
+        present(activityView, animated: true)
+    }
+    
+    func didTapSafariButton(for user: User) {
+        guard let url = URL(string: user.htmlUrl) else {
+            presentWFAlertVCOnMainThread(
+                title: "Invalid URL",
+                message: "The URL attached to this user is invalid",
+                buttonTitle: "OK"
+            )
+            return
+        }
+        let safariVC = SFSafariViewController(url: url)
+        safariVC.preferredControlTintColor = .systemOrange
+        present(safariVC, animated: true)
+    }
+    
 }
 
 #Preview {

@@ -33,14 +33,8 @@ class BaseUserListVC: UIViewController, DataLoadingView {
     // MARK: ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Display followers setup (has to go first)
-        setupCollectionView()
-        setupDataSource()
-        getContent()
         // Setup
         setupView()
-        setupSearchController()
-        addSubViews()
     }
     override func viewWillAppear(_ animated: Bool) {
         title = username + "'s followers"
@@ -96,8 +90,15 @@ extension BaseUserListVC {
 // MARK: - Setting View
 extension BaseUserListVC {
     func setupView() {
+        // Display followers setup (has to go first)
+        setupCollectionView()
+        setupDataSource()
+        
         view.backgroundColor = .systemBackground
         view.inputViewController?.navigationItem.title = username
+        getContent()
+        setupSearchController()
+        addSubViews()
     }
 }
 // MARK: - Setting

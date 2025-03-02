@@ -43,7 +43,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         return tabBarC
     }
     func setupNavigationBarAppearance() {
-        UINavigationBar.appearance().scrollEdgeAppearance = UINavigationBarAppearance()
+        let appearance = UINavigationBar.appearance()
+        appearance.scrollEdgeAppearance = UINavigationBarAppearance()
+        appearance.tintColor = .systemOrange
     }
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

@@ -13,8 +13,7 @@ struct UserTileData {
     var icon: UIImage
     var value: String
     var tileColor: UIColor
-    // Action
-    private(set) var action: (() -> Void)?
+    
     // MARK: - Initializers
     init(
         title: String,
@@ -29,10 +28,7 @@ struct UserTileData {
         self.value = value
         self.tileColor = tileColor
     }
-    // MARK: - Methods
-    mutating func setAction(_ action: (() -> Void)?) {
-        self.action = action
-    }
+    
 }
 
 // MARK: - Hashable conformance
