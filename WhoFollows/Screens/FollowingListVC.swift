@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class FollowingListVC: FollowersListVC {
+class FollowingListVC: BaseUserListVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         title = username + "'s following"
