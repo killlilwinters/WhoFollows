@@ -95,7 +95,8 @@ extension BaseUserListVC {
         setupDataSource()
         
         view.backgroundColor = .systemBackground
-        view.inputViewController?.navigationItem.title = username
+//        view.inputViewController?.navigationItem.title = username
+        setupAddButton()
         getContent()
         setupSearchController()
         addSubViews()
@@ -153,6 +154,19 @@ extension BaseUserListVC {
         DispatchQueue.main.async {
             self.dataSource.apply(snapshot, animatingDifferences: true)
         }
+    }
+    private func setupAddButton() {
+        guard presentingViewController == nil else { return }
+        let addButton = UIBarButtonItem(
+            barButtonSystemItem: .add,
+            target: self,
+            action: #selector(addToFavorites)
+        )
+        navigationItem.rightBarButtonItem = addButton
+    }
+    @objc private func addToFavorites() {
+        #warning("Implement me")
+        print("Add button tapped")
     }
 }
 // MARK: - Collection view delegate

@@ -113,13 +113,13 @@ extension UserInfoVC {
             target: self,
             action: #selector(dismissVC)
         )
-        let favoriteButton = UIBarButtonItem(
-            barButtonSystemItem: .save,
+        let addButton = UIBarButtonItem(
+            barButtonSystemItem: .add,
             target: self,
             action: #selector(favoriteUser)
         )
         navigationItem.rightBarButtonItem = doneButton
-        navigationItem.leftBarButtonItem = favoriteButton
+        navigationItem.leftBarButtonItem = addButton
     }
 }
 
@@ -293,9 +293,7 @@ extension UserInfoVC: UserInfoVCDelegate {
             )
             return
         }
-        let safariVC = SFSafariViewController(url: url)
-        safariVC.preferredControlTintColor = .systemOrange
-        present(safariVC, animated: true)
+        presentSafariVC(with: url)
     }
     
 }

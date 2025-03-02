@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E9375FE62D74F1720055A875 /* FollowerEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9375FE32D74F1720055A875 /* FollowerEntity+CoreDataClass.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		E9375FE32D74F1720055A875 /* FollowerEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FollowerEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
 		E96EA0F62D48329F00F0DD2D /* WhoFollows.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoFollows.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,6 +50,7 @@
 		E96EA0ED2D48329F00F0DD2D = {
 			isa = PBXGroup;
 			children = (
+				E9375FE32D74F1720055A875 /* FollowerEntity+CoreDataClass.swift */,
 				E96EA0F82D48329F00F0DD2D /* WhoFollows */,
 				E96EA0F72D48329F00F0DD2D /* Products */,
 			);
@@ -157,6 +163,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9375FE62D74F1720055A875 /* FollowerEntity+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
