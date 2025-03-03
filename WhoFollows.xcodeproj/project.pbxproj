@@ -10,8 +10,19 @@
 		E9375FE62D74F1720055A875 /* FollowerEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9375FE32D74F1720055A875 /* FollowerEntity+CoreDataClass.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		E9375FF32D75CCF30055A875 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E96EA0EE2D48329F00F0DD2D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E96EA0F52D48329F00F0DD2D;
+			remoteInfo = WhoFollows;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		E9375FE32D74F1720055A875 /* FollowerEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FollowerEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		E9375FEF2D75CCF30055A875 /* WhoFollowsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhoFollowsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E96EA0F62D48329F00F0DD2D /* WhoFollows.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhoFollows.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -26,6 +37,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		E9375FF02D75CCF30055A875 /* WhoFollowsTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WhoFollowsTests;
+			sourceTree = "<group>";
+		};
 		E96EA0F82D48329F00F0DD2D /* WhoFollows */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -37,6 +53,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E9375FEC2D75CCF30055A875 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E96EA0F32D48329F00F0DD2D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -52,6 +75,7 @@
 			children = (
 				E9375FE32D74F1720055A875 /* FollowerEntity+CoreDataClass.swift */,
 				E96EA0F82D48329F00F0DD2D /* WhoFollows */,
+				E9375FF02D75CCF30055A875 /* WhoFollowsTests */,
 				E96EA0F72D48329F00F0DD2D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				E96EA0F62D48329F00F0DD2D /* WhoFollows.app */,
+				E9375FEF2D75CCF30055A875 /* WhoFollowsTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,6 +92,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		E9375FEE2D75CCF30055A875 /* WhoFollowsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E9375FF52D75CCF30055A875 /* Build configuration list for PBXNativeTarget "WhoFollowsTests" */;
+			buildPhases = (
+				E9375FEB2D75CCF30055A875 /* Sources */,
+				E9375FEC2D75CCF30055A875 /* Frameworks */,
+				E9375FED2D75CCF30055A875 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E9375FF42D75CCF30055A875 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E9375FF02D75CCF30055A875 /* WhoFollowsTests */,
+			);
+			name = WhoFollowsTests;
+			packageProductDependencies = (
+			);
+			productName = WhoFollowsTests;
+			productReference = E9375FEF2D75CCF30055A875 /* WhoFollowsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		E96EA0F52D48329F00F0DD2D /* WhoFollows */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E96EA1092D4832A000F0DD2D /* Build configuration list for PBXNativeTarget "WhoFollows" */;
@@ -100,6 +148,10 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
+					E9375FEE2D75CCF30055A875 = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = E96EA0F52D48329F00F0DD2D;
+					};
 					E96EA0F52D48329F00F0DD2D = {
 						CreatedOnToolsVersion = 16.2;
 					};
@@ -122,11 +174,19 @@
 			projectRoot = "";
 			targets = (
 				E96EA0F52D48329F00F0DD2D /* WhoFollows */,
+				E9375FEE2D75CCF30055A875 /* WhoFollowsTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		E9375FED2D75CCF30055A875 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E96EA0F42D48329F00F0DD2D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -159,6 +219,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E9375FEB2D75CCF30055A875 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E96EA0F22D48329F00F0DD2D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -169,7 +236,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E9375FF42D75CCF30055A875 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E96EA0F52D48329F00F0DD2D /* WhoFollows */;
+			targetProxy = E9375FF32D75CCF30055A875 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		E9375FF62D75CCF30055A875 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XUYF93872P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.makswinters.WhoFollowsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WhoFollows.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WhoFollows";
+			};
+			name = Debug;
+		};
+		E9375FF72D75CCF30055A875 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XUYF93872P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.makswinters.WhoFollowsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WhoFollows.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WhoFollows";
+			};
+			name = Release;
+		};
 		E96EA10A2D4832A000F0DD2D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -360,6 +471,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E9375FF52D75CCF30055A875 /* Build configuration list for PBXNativeTarget "WhoFollowsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9375FF62D75CCF30055A875 /* Debug */,
+				E9375FF72D75CCF30055A875 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E96EA0F12D48329F00F0DD2D /* Build configuration list for PBXProject "WhoFollows" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

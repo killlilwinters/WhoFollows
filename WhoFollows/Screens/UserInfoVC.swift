@@ -4,6 +4,8 @@
 //
 //  Created by Maks Winters on 18.02.2025.
 //
+// https://www.hackingwithswift.com/articles/118/uiactivityviewcontroller-by-example
+//
 
 import UIKit
 import SafariServices
