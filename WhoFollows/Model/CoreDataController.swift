@@ -11,11 +11,14 @@ import UIKit
 
 enum CoreDataError: LocalizedError {
     case followerNotFound
+    case invalidFollowerData
     
     var errorDescription: String? {
         switch self {
         case .followerNotFound:
             return "Follower not found."
+        case .invalidFollowerData:
+            return "The follower data is invalid."
         }
     }
 }
@@ -78,13 +81,35 @@ extension CoreDataController {
         }
     }
     
+    func getFollower(login: String) throws -> Follower {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "FollowerEntity")
+        let predicate = NSPredicate(format: "login == %@", login)
+        
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try context.fetch(fetchRequest) as? [FollowerEntity]
+            guard let followerEntity = fetchResult?.first else { throw CoreDataError.followerNotFound }
+            
+            guard let login = followerEntity.login, let avatarURL = followerEntity.avatarURL else {
+                throw CoreDataError.invalidFollowerData
+            }
+            
+            return Follower(login: login, avatarUrl: avatarURL)
+            
+        } catch {
+            throw error
+        }
+    }
+    
     func addFollower(_ follower: Follower, image: UIImage) throws {
         let newFollower = FollowerEntity(context: context)
         
         newFollower.login = follower.login
+        newFollower.avatarURL = follower.avatarUrl
         
         do {
-            newFollower.imagePath = try image.saveToDisk(follower: follower)
+            newFollower.avatarImagePath = try image.saveToDisk(follower: follower)
             try context.save()
         } catch {
             throw error
