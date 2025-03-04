@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "0B64FA2E-1769-48EE-8C63-1F07F1F63EC6",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:WhoFollows.xcodeproj",
+        "identifier" : "E9375FEE2D75CCF30055A875",
+        "name" : "WhoFollowsTests"
+      }
+    }
+  ],
+  "version" : 1
+}

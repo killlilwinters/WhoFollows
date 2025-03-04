@@ -11,6 +11,7 @@ enum UIImageError: LocalizedError {
     case missingCacheURL
     case conversionFailed
     case dataWritingFailed
+    case deletionFailed
     
     var errorDescription: String? {
         switch self {
@@ -20,18 +21,16 @@ enum UIImageError: LocalizedError {
             return "Conversion of UIImage to Data failed"
         case .dataWritingFailed:
             return "Writing Data to disk failed"
+        case .deletionFailed:
+            return "Deleting file from disk failed"
         }
     }
 }
 
 extension UIImage {
     
-    static let cacheURL: URL? = {
-        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
-    }()
-    
     func saveToDisk(follower: Follower) throws -> String? {
-        guard let url = UIImage.cacheURL else {
+        guard let url = FileManager.cacheURL else {
             throw UIImageError.missingCacheURL
         }
         let itemURL = url.appendingPathComponent(follower.login)
@@ -49,39 +48,29 @@ extension UIImage {
         
     }
     
-    static func getFromDisk(fileName: String) -> UIImage? {
-        guard let url = cacheURL else { return nil }
+    static func getFromDisk(login fileName: String) throws -> UIImage? {
+        guard let url = FileManager.cacheURL else {
+            throw UIImageError.missingCacheURL
+        }
         
         let itemURL = url.appendingPathComponent(fileName)
         
         return UIImage(contentsOfFile: itemURL.path)
     }
     
-    static func removeFromDisk(fileName: String) {
-        guard let url = cacheURL else { return }
+    static func removeFromDisk(login fileName: String) throws {
+        guard let url = FileManager.cacheURL else {
+            throw UIImageError.missingCacheURL
+        }
         
         let itemURL = url.appendingPathComponent(fileName)
         
         do {
             try FileManager.default.removeItem(at: itemURL)
         } catch {
-            print(error.localizedDescription)
+            throw UIImageError.deletionFailed
         }
         
-    }
-    
-    static func clearCache() {
-        let fileManager = FileManager.default
-        guard let url = cacheURL else { return }
-        
-        do {
-            let items = try fileManager.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
-            try items.forEach {
-                try fileManager.removeItem(at: $0)
-            }
-        } catch {
-            print(error.localizedDescription)
-        }
     }
     
 }

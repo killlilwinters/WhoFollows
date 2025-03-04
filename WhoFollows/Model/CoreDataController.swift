@@ -11,11 +11,14 @@ import UIKit
 
 enum CoreDataError: LocalizedError {
     case followerNotFound
+    case invalidFollowerData
     
     var errorDescription: String? {
         switch self {
         case .followerNotFound:
             return "Follower not found."
+        case .invalidFollowerData:
+            return "The follower data is invalid."
         }
     }
 }
@@ -69,10 +72,31 @@ class CoreDataController {
 // MARK: - Public methods
 extension CoreDataController {
     
-    func fetchAllFolowers() throws -> [FollowerEntity] {
+    func fetchAllFollowers() throws -> [FollowerEntity] {
         let fetchRequest: NSFetchRequest<FollowerEntity> = FollowerEntity.fetchRequest()
         do {
             return try context.fetch(fetchRequest)
+        } catch {
+            throw error
+        }
+    }
+    
+    func getFollower(login: String) throws -> Follower {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "FollowerEntity")
+        let predicate = NSPredicate(format: "login == %@", login)
+        
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try context.fetch(fetchRequest) as? [FollowerEntity]
+            guard let followerEntity = fetchResult?.first else { throw CoreDataError.followerNotFound }
+            
+            guard let login = followerEntity.login, let avatarURL = followerEntity.avatarURL else {
+                throw CoreDataError.invalidFollowerData
+            }
+            
+            return Follower(login: login, avatarUrl: avatarURL)
+            
         } catch {
             throw error
         }
@@ -82,9 +106,10 @@ extension CoreDataController {
         let newFollower = FollowerEntity(context: context)
         
         newFollower.login = follower.login
+        newFollower.avatarURL = follower.avatarUrl
         
         do {
-            newFollower.imagePath = try image.saveToDisk(follower: follower)
+            newFollower.avatarImagePath = try image.saveToDisk(follower: follower)
             try context.save()
         } catch {
             throw error
@@ -92,14 +117,16 @@ extension CoreDataController {
         
     }
     
-    func removeFollower(for login: String) throws {
+    func removeFollower(login: String) throws {
         do {
-            let followers = try fetchAllFolowers()
+            let followers = try fetchAllFollowers()
+            
             if let follower = followers.first(where: { $0.login == login }) {
                 self.context.delete(follower)
             } else {
                 throw CoreDataError.followerNotFound
             }
+            
         } catch {
             throw error
         }
