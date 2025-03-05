@@ -68,7 +68,8 @@ extension CoreDataTests {
         let uiImage = UIImage(resource: .avatarPlaceholder)
         try? coreDataController.addFollower(follower, image: uiImage)
         
-        guard let returnedFollower = try? coreDataController.getFollower(login: follower.login) else {
+        let savedFollower = try? coreDataController.getFollower(login: follower.login)
+        guard savedFollower != nil else {
             return XCTFail("There was an error with getting the follower.")
         }
         
@@ -100,7 +101,21 @@ extension CoreDataTests {
         } catch {
             XCTAssertEqual(error as? CoreDataError, CoreDataError.followerNotFound)
         }
+    }
+    
+    func test_fetchAllFollowers_empty() {
+        XCTAssertEqual(try? coreDataController.fetchAllFollowers(), [FollowerEntity]())
+    }
+    
+    func test_addFollower_addExisting() {
+        let uiImage = UIImage(resource: .avatarPlaceholder)
         
+        do {
+            try coreDataController.addFollower(follower, image: uiImage)
+            try coreDataController.addFollower(follower, image: uiImage)
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
 }

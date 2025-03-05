@@ -91,11 +91,11 @@ extension CoreDataController {
             let fetchResult = try context.fetch(fetchRequest) as? [FollowerEntity]
             guard let followerEntity = fetchResult?.first else { throw CoreDataError.followerNotFound }
             
-            guard let login = followerEntity.login, let avatarURL = followerEntity.avatarURL else {
+            guard let convertedFollower = followerEntity.convertToFollower else {
                 throw CoreDataError.invalidFollowerData
             }
             
-            return Follower(login: login, avatarUrl: avatarURL)
+            return convertedFollower
             
         } catch {
             throw error

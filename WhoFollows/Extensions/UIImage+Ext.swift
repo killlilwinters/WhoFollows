@@ -35,15 +35,16 @@ extension UIImage {
         }
         let itemURL = url.appendingPathComponent(follower.login)
         
-        guard let data = self.jpegData(compressionQuality: 0.6) else {
+        if let data = self.jpegData(compressionQuality: 0.6) {
+            
+            do { return try data.writeImageData(at: itemURL) } catch { throw error }
+            
+        } else if let data = self.pngData() {
+            
+            do { return try data.writeImageData(at: itemURL) } catch { throw error }
+            
+        } else {
             throw UIImageError.conversionFailed
-        }
-        
-        do {
-            try data.write(to: itemURL)
-            return itemURL.path
-        } catch {
-            throw UIImageError.dataWritingFailed
         }
         
     }

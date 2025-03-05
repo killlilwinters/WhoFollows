@@ -11,5 +11,10 @@ import CoreData
 
 @objc(FollowerEntity)
 public class FollowerEntity: NSManagedObject {
-
+    
+    var convertToFollower: Follower? {
+        guard let login = login, let avatarURL = avatarURL else { return nil }
+        return Follower(login: login, avatarUrl: avatarURL)
+    }
+    
 }
