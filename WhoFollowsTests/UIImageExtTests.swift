@@ -32,13 +32,19 @@ final class UIImageExtTests: XCTestCase {
         
     }
     
+    override func setUp() {
+        FileManager.clearCache()
+    }
+    
 }
 
 // MARK: - Tests
 extension UIImageExtTests {
     
     func test_saveToDisk() {
+        
         let uiImage = UIImage(resource: .avatarPlaceholder)
+        let uiImageDataHashed = uiImage.pngData()?.hashValue ?? 0
         
         do {
             
@@ -48,7 +54,9 @@ extension UIImageExtTests {
                 return XCTFail("Failed to get image contents")
             }
             
-            XCTAssertEqual(uiImage, returnImage)
+            let returnImageDataHashed = returnImage.pngData()?.hashValue
+            
+            XCTAssertEqual(uiImageDataHashed, returnImageDataHashed)
             
         } catch {
             print(error.localizedDescription)

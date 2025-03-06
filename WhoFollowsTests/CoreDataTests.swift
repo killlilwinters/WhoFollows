@@ -18,6 +18,7 @@ final class CoreDataTests: XCTestCase {
     override func setUp() {
         super.setUp()
         coreDataController = CoreDataController.testingInstance
+        coreDataController.removeAllFollowers()
     }
     
     override func tearDown() {
@@ -80,14 +81,19 @@ extension CoreDataTests {
     
     func test_fetchAllFollowers() {
         let uiImage = UIImage(resource: .avatarPlaceholder)
-        let anotherFollower = Follower(login: "anotherLogin", avatarUrl: "")
+        let firstFollower = Follower(login: "coolGuy", avatarUrl: "")
+        let secondFollower = Follower(login: "anotherLogin", avatarUrl: "")
         
-        try? coreDataController.addFollower(follower, image: uiImage)
-        try? coreDataController.addFollower(anotherFollower, image: uiImage)
+        do {
+            try coreDataController.addFollower(firstFollower, image: uiImage)
+            try coreDataController.addFollower(secondFollower, image: uiImage)
+        } catch {
+            print(error.localizedDescription)
+        }
         
-        let allFollowers = try? coreDataController.fetchAllFollowers()
+        let allFollowers = coreDataController.getAllFollowers()
         
-        XCTAssertEqual(allFollowers?.count, 2)
+        XCTAssertEqual(allFollowers.count, 2)
     }
     
 }
@@ -104,7 +110,7 @@ extension CoreDataTests {
     }
     
     func test_fetchAllFollowers_empty() {
-        XCTAssertEqual(try? coreDataController.fetchAllFollowers(), [FollowerEntity]())
+        XCTAssertEqual(coreDataController.getAllFollowers(), [FollowerEntity]())
     }
     
     func test_addFollower_addExisting() {
@@ -116,6 +122,8 @@ extension CoreDataTests {
         } catch {
             print(error.localizedDescription)
         }
+        
+        XCTAssertEqual(coreDataController.getAllFollowers().count, 1)
     }
     
 }

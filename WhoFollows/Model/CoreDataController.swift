@@ -12,6 +12,7 @@ import UIKit
 enum CoreDataError: LocalizedError {
     case followerNotFound
     case invalidFollowerData
+    case followerAlreadyExists
     
     var errorDescription: String? {
         switch self {
@@ -19,25 +20,31 @@ enum CoreDataError: LocalizedError {
             return "Follower not found."
         case .invalidFollowerData:
             return "The follower data is invalid."
+        case .followerAlreadyExists:
+            return "Follower already exists."
         }
     }
 }
 
 class CoreDataController {
-
+    
+    enum EntityNames {
+        static let followerEntity = "FollowerEntity"
+    }
+    
     static let shared = CoreDataController()
     static var testingInstance: CoreDataController = {
         return .init(inMemory: true)
     }()
-
+    
     // Persistent container for Core Data
     private let persistentContainer: NSPersistentContainer
-
+    
     // Managed Object Context
     var context: NSManagedObjectContext {
         return persistentContainer.viewContext
     }
-
+    
     private init(inMemory: Bool = false) {
         // Initialize persistent container
         persistentContainer = NSPersistentContainer(name: "WhoFollows")
@@ -45,7 +52,7 @@ class CoreDataController {
         if inMemory {
             persistentContainer.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
-
+        
         // Load persistent stores
         persistentContainer.loadPersistentStores { _, error in
             if let error = error as NSError? {
@@ -53,7 +60,7 @@ class CoreDataController {
             }
         }
     }
-
+    
     // Save context
     func saveContext() {
         let context = persistentContainer.viewContext
@@ -69,20 +76,45 @@ class CoreDataController {
     
 }
 
+// MARK: - Private methods
+extension CoreDataController {
+    private func doesFollowerExist(login: String) -> Bool {
+        let fetchRequest = NSFetchRequest<FollowerEntity>(entityName: EntityNames.followerEntity)
+        let fetched = try? context.fetch(fetchRequest)
+        
+        let doesExist = fetched?.contains(where: { $0.login == login })
+        
+        return doesExist ?? false
+    }
+}
+
 // MARK: - Public methods
 extension CoreDataController {
     
-    func fetchAllFollowers() throws -> [FollowerEntity] {
+    func getAllFollowers() -> [FollowerEntity] {
         let fetchRequest: NSFetchRequest<FollowerEntity> = FollowerEntity.fetchRequest()
-        do {
-            return try context.fetch(fetchRequest)
-        } catch {
-            throw error
+        
+        guard let followers = try? context.fetch(fetchRequest) else {
+            return [FollowerEntity]()
         }
+        return followers
+        
+    }
+    
+    func removeAllFollowers() {
+        let fetchRequest: NSFetchRequest<FollowerEntity> = FollowerEntity.fetchRequest()
+        
+        if let followersToDelete = try? context.fetch(fetchRequest) {
+            followersToDelete.forEach {
+                context.delete($0)
+            }
+        }
+        
+        try? context.save()
     }
     
     func getFollower(login: String) throws -> Follower {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "FollowerEntity")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: EntityNames.followerEntity)
         let predicate = NSPredicate(format: "login == %@", login)
         
         fetchRequest.predicate = predicate
@@ -103,6 +135,10 @@ extension CoreDataController {
     }
     
     func addFollower(_ follower: Follower, image: UIImage) throws {
+        guard doesFollowerExist(login: follower.login) == false else {
+            throw CoreDataError.followerAlreadyExists
+        }
+        
         let newFollower = FollowerEntity(context: context)
         
         newFollower.login = follower.login
@@ -118,18 +154,16 @@ extension CoreDataController {
     }
     
     func removeFollower(login: String) throws {
-        do {
-            let followers = try fetchAllFollowers()
-            
-            if let follower = followers.first(where: { $0.login == login }) {
-                self.context.delete(follower)
-            } else {
-                throw CoreDataError.followerNotFound
-            }
-            
-        } catch {
-            throw error
+        
+        let followers = getAllFollowers()
+        
+        if let follower = followers.first(where: { $0.login == login }) {
+            self.context.delete(follower)
+        } else {
+            throw CoreDataError.followerNotFound
         }
+        
+        try? context.save()
         
     }
     
