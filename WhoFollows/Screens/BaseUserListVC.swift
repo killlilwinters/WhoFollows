@@ -11,7 +11,7 @@ class BaseUserListVC: UIViewController, DataLoadingView {
     enum Section { case main }
     
     // Network Manager
-    private let networkManager = NetworkManager.shared
+    let networkManager = NetworkManager.shared
     
     // Conform to DataLoadingView
     var containerView: UIView!
@@ -63,7 +63,7 @@ class BaseUserListVC: UIViewController, DataLoadingView {
             checkIfHasFollowers(followers)
         case .failure(let error):
             self.presentWFAlertVCOnMainThread(
-                title: "Something went wrong...",
+                title: .somethingWentWrong,
                 message: error.rawValue,
                 buttonTitle: "OK"
             )
@@ -93,10 +93,7 @@ extension BaseUserListVC {
         // Display followers setup (has to go first)
         setupCollectionView()
         setupDataSource()
-        
         view.backgroundColor = .systemBackground
-//        view.inputViewController?.navigationItem.title = username
-        setupAddButton()
         getContent()
         setupSearchController()
         addSubViews()
@@ -134,7 +131,6 @@ extension BaseUserListVC {
             ) as? FollowerCell else {
                 fatalError("Could not create new cell")
             }
-            
             cell.set(follower: follower)
             return cell
         }
@@ -154,19 +150,6 @@ extension BaseUserListVC {
         DispatchQueue.main.async {
             self.dataSource.apply(snapshot, animatingDifferences: true)
         }
-    }
-    private func setupAddButton() {
-        guard presentingViewController == nil else { return }
-        let addButton = UIBarButtonItem(
-            barButtonSystemItem: .add,
-            target: self,
-            action: #selector(addToFavorites)
-        )
-        navigationItem.rightBarButtonItem = addButton
-    }
-    @objc private func addToFavorites() {
-        #warning("Implement me")
-        print("Add button tapped")
     }
 }
 // MARK: - Collection view delegate

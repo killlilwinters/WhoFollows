@@ -17,4 +17,8 @@ struct User: Codable, Hashable {
     var location: String?
     let publicRepos: Int
     let publicGists: Int
+    
+    func convertToFollower() -> Follower {
+        Follower(login: login, avatarUrl: avatarUrl)
+    }
 }

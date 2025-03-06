@@ -18,6 +18,9 @@ enum WFSymbols {
     
     case shareIcon
     case safariIcon
+    
+    case addIcon
+    case checkmarkIcon
 
     var image: UIImage {
         switch self {
@@ -35,8 +38,18 @@ enum WFSymbols {
             return UIImage(systemName: "square.and.arrow.up")!
         case .safariIcon:
             return UIImage(systemName: "safari")!
+        case .addIcon:
+            return UIImage(systemName: "plus")!
+        case .checkmarkIcon:
+            return UIImage(systemName: "checkmark")!
         }
     }
+}
+
+enum WFAlertTitleMessages: String {
+    case somethingWentWrong = "Something went wrong..."
+    case userExists = "User already exists"
+    case invalidURL = "Invalid URL"
 }
 
 // MARK: - Preview constants

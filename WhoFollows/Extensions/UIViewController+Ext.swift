@@ -9,9 +9,10 @@ import UIKit
 import SafariServices
 
 extension UIViewController {
-    func presentWFAlertVCOnMainThread(title: String, message: String, buttonTitle: String) {
+    func presentWFAlertVCOnMainThread(title: WFAlertTitleMessages, message: String, buttonTitle: String) {
+        let titleString = title.rawValue
         DispatchQueue.main.async {
-            let alertVC = WFAlertVC(alertTitle: title, message: message, buttonTitle: buttonTitle)
+            let alertVC = WFAlertVC(alertTitle: titleString, message: message, buttonTitle: buttonTitle)
             alertVC.modalPresentationStyle = .overFullScreen
             alertVC.modalTransitionStyle = .crossDissolve
             self.present(alertVC, animated: true)

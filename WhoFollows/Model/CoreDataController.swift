@@ -9,23 +9,6 @@ import Foundation
 import CoreData
 import UIKit
 
-enum CoreDataError: LocalizedError {
-    case followerNotFound
-    case invalidFollowerData
-    case followerAlreadyExists
-    
-    var errorDescription: String? {
-        switch self {
-        case .followerNotFound:
-            return "Follower not found."
-        case .invalidFollowerData:
-            return "The follower data is invalid."
-        case .followerAlreadyExists:
-            return "Follower already exists."
-        }
-    }
-}
-
 class CoreDataController {
     
     enum EntityNames {
@@ -78,7 +61,7 @@ class CoreDataController {
 
 // MARK: - Private methods
 extension CoreDataController {
-    private func doesFollowerExist(login: String) -> Bool {
+    func doesFollowerExist(login: String) -> Bool {
         let fetchRequest = NSFetchRequest<FollowerEntity>(entityName: EntityNames.followerEntity)
         let fetched = try? context.fetch(fetchRequest)
         

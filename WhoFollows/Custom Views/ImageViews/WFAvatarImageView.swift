@@ -32,42 +32,30 @@ final class WFAvatarImageView: UIImageView {
     func downloadImage(from urlString: String) {
         // Set default so the cells don't reuse images they were previously assigned
         image = WFAvatarImageView.placeholderImage
-        getFromCache(for: urlString) { image in
+        // Check if the image is in cache already
+        if let image = getFromCache(for: urlString) {
             self.image = image
             return
         }
         // Proceed to download
-        guard let url = URL(string: urlString) else { return }
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if error != nil {
-                return
-            }
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                return
-            }
-            guard let data = data else {
-                return
-            }
-            guard let image = UIImage(data: data) else {
-                return
-            }
+        Task { [weak self] in
+            guard let self = self else { return }
+            let image = await NetworkManager.shared.downloadImage(from: urlString)
             self.setToCache(image: image, for: urlString)
-            DispatchQueue.main.async {
-                self.image = image
-            }
+            
+            self.image = image
         }
-        task.resume()
     }
 }
 
 // MARK: - Caching logic
 extension WFAvatarImageView {
-    private func getFromCache(for urlString: String, completion: @escaping (UIImage?) -> Void) {
+    private func getFromCache(for urlString: String) -> UIImage? {
         let nsUrlString = urlString as NSString
         if let image = cache.object(forKey: nsUrlString) {
-            self.image = image
-            completion(image)
+            return image
         }
+        return nil
     }
     private func setToCache(image: UIImage, for urlString: String) {
         let nsUrlString = urlString as NSString

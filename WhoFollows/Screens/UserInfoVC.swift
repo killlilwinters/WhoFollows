@@ -15,7 +15,9 @@ protocol UserInfoVCDelegate: AnyObject {
     func didTapSafariButton(for user: User)
 }
 
-final class UserInfoVC: UIViewController {
+final class UserInfoVC: UIViewController, DataLoadingView {
+    var containerView: UIView!
+    
     // Collection View
     enum Section { case main }
     private var collectionView: UICollectionView!
@@ -23,6 +25,7 @@ final class UserInfoVC: UIViewController {
     // MARK: - Private Property
     private var follower: Follower!
     private let networkManager = NetworkManager.shared
+    private let coreDataController = CoreDataController.shared
     // MARK: - UI Elements
     private let userHeaderView = WFUserInfoHeaderVC()
     private let userFooterView = WFUserInfoFooterVC()
@@ -59,7 +62,22 @@ extension UserInfoVC {
         dismiss(animated: true)
     }
     @objc func favoriteUser() {
-        // TODO: Implement
+        guard coreDataController.doesFollowerExist(login: follower.login) != true else {
+            presentWFAlertVCOnMainThread(
+                title: WFAlertTitleMessages.userExists,
+                message: "Follower \"\(follower.login)\" is already in your favorites list.",
+                buttonTitle: "OK"
+            )
+            return
+        }
+        
+        Task {
+            showLoadingView()
+            await performAddFavorite()
+            setupBarButtons()
+            dismissLoadingView()
+        }
+        
     }
 }
 // MARK: - Logic
@@ -90,7 +108,7 @@ extension UserInfoVC {
 // #endif
             case .failure(let error):
                 presentWFAlertVCOnMainThread(
-                    title: "Something went wrong...",
+                    title: .somethingWentWrong,
                     message: error.rawValue,
                     buttonTitle: "OK"
                 )
@@ -104,22 +122,26 @@ extension UserInfoVC {
     func setupView() {
         title = follower?.login
         userHeaderView.delegate = self
-        setupDoneButton()
+        setupBarButtons()
         setupCollectionView()
         setupDataSource()
         addSubViews()
     }
-    private func setupDoneButton() {
+    private func setupBarButtons() {
         let doneButton = UIBarButtonItem(
             barButtonSystemItem: .done,
             target: self,
             action: #selector(dismissVC)
         )
+        var buttonIcon: WFSymbols = .addIcon
+        if coreDataController.doesFollowerExist(login: follower.login) == true {
+            buttonIcon = .checkmarkIcon
+        }
         let addButton = UIBarButtonItem(
-            barButtonSystemItem: .add,
+            image: buttonIcon.image,
+            style: .plain,
             target: self,
-            action: #selector(favoriteUser)
-        )
+            action: #selector(favoriteUser))
         navigationItem.rightBarButtonItem = doneButton
         navigationItem.leftBarButtonItem = addButton
     }
@@ -158,18 +180,21 @@ extension UserInfoVC {
         dataSource = UICollectionViewDiffableDataSource<Section, UserTileData>(
             collectionView: collectionView
         ) { collectionView, indexPath, userInfoPiece in
+            
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: UserInfoTileCell.reuseId,
                 for: indexPath
             ) as? UserInfoTileCell else {
                 fatalError("Could not create a new cell for User")
             }
+            
             cell.set(userInfoPiece: userInfoPiece)
             return cell
         }
         // Setting up the header view
         dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
             guard let self = self else { fatalError("Error creating the header view") }
+            
             // Dequeue Header
             if kind == UICollectionView.elementKindSectionHeader {
                 guard let header = collectionView.dequeueReusableSupplementaryView(
@@ -182,6 +207,7 @@ extension UserInfoVC {
                 header.addChildVC(childVC: self.userHeaderView, parentVC: self)
                 return header
             }
+            
             // Dequeue Footer
             if kind == UICollectionView.elementKindSectionFooter {
                 guard let footer = collectionView.dequeueReusableSupplementaryView(
@@ -194,6 +220,7 @@ extension UserInfoVC {
                 footer.addChildVC(childVC: self.userFooterView, parentVC: self)
                 return footer
             }
+            
             return nil
         }
     }
@@ -289,7 +316,7 @@ extension UserInfoVC: UserInfoVCDelegate {
     func didTapSafariButton(for user: User) {
         guard let url = URL(string: user.htmlUrl) else {
             presentWFAlertVCOnMainThread(
-                title: "Invalid URL",
+                title: .invalidURL,
                 message: "The URL attached to this user is invalid",
                 buttonTitle: "OK"
             )
@@ -298,6 +325,21 @@ extension UserInfoVC: UserInfoVCDelegate {
         presentSafariVC(with: url)
     }
     
+}
+// MARK: - Persistence
+extension UserInfoVC {
+    private func performAddFavorite() async {
+        do {
+            let image = await networkManager.downloadImage(from: follower.avatarUrl)
+            try coreDataController.addFollower(follower, image: image)
+        } catch {
+            presentWFAlertVCOnMainThread(
+                title: WFAlertTitleMessages.somethingWentWrong,
+                message: error.localizedDescription,
+                buttonTitle: "OK"
+            )
+        }
+    }
 }
 
 #Preview {

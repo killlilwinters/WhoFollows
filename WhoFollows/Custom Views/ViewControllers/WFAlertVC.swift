@@ -39,13 +39,16 @@ final class WFAlertVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        setupButton()
     }
 
 }
 
 // MARK: - Logic
-
 extension WFAlertVC {
+    private func setupButton() {
+        button.addAction(UIAction { _ in self.dismissVC() }, for: .touchUpInside)
+    }
 }
 
 // MARK: - Setting Views
@@ -54,6 +57,9 @@ extension WFAlertVC {
     private func setupView() {
         addSubVIews()
         setupLayout()
+    }
+    private func dismissVC() {
+        dismiss(animated: true)
     }
 }
 
