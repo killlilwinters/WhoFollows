@@ -35,10 +35,9 @@ final class SearchVC: UIViewController {
 // MARK: - Logic
 extension SearchVC {
     private func pushFollowersListVC() {
-        let followersVC = FollowersListVC()
-        let text = searchTextField.text ?? ""
-        followersVC.username = text
-        navigationController?.pushViewController(followersVC, animated: true)
+        let searchUser = Follower(login: searchTextField.text!, avatarUrl: "")
+        let userInfoVC = UserInfoVC(follower: searchUser)
+        navigationController?.pushViewController(userInfoVC, animated: true)
     }
 }
 

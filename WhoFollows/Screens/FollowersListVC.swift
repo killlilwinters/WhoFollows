@@ -26,28 +26,10 @@ class FollowersListVC: BaseUserListVC {
             
         }
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupAddButton()
-    }
 }
 
 // MARK: -
 extension FollowersListVC {
-    
-    private func setupAddButton() {
-        var buttonIcon: WFSymbols = .addIcon
-        if coreDataController.doesFollowerExist(login: username) == true {
-            buttonIcon = .checkmarkIcon
-        }
-        guard presentingViewController == nil else { return }
-        let addButton = UIBarButtonItem(
-            image: buttonIcon.image,
-            style: .plain,
-            target: self,
-            action: #selector(saveToFavorites))
-        navigationItem.rightBarButtonItem = addButton
-    }
     
     private func performAddFavorite(user: User) async {
         let follower = user.convertToFollower()
@@ -87,7 +69,6 @@ extension FollowersListVC {
                 Task {
                     await self.performAddFavorite(user: user)
                     self.dismissLoadingView()
-                    self.setupAddButton()
                 }
             case .failure(let error):
                 self.presentWFAlertVCOnMainThread(

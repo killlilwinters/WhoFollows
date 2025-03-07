@@ -44,6 +44,7 @@ final class UserInfoVC: UIViewController, DataLoadingView {
         super.viewDidLoad()
         getUser()
         setupView()
+        navigationController?.setNavigationBarHidden(false, animated: true)
     }
 }
 #if DEBUG
@@ -142,8 +143,12 @@ extension UserInfoVC {
             style: .plain,
             target: self,
             action: #selector(favoriteUser))
-        navigationItem.rightBarButtonItem = doneButton
-        navigationItem.leftBarButtonItem = addButton
+        if presentingViewController == nil {
+            navigationItem.rightBarButtonItem = addButton
+        } else {
+            navigationItem.rightBarButtonItem = doneButton
+            navigationItem.leftBarButtonItem = addButton
+        }
     }
 }
 
