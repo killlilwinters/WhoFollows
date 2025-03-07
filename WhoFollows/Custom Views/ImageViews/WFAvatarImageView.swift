@@ -43,7 +43,7 @@ final class WFAvatarImageView: UIImageView {
         // Proceed to download
         Task { [weak self] in
             guard let self = self else { return }
-            let image = await NetworkManager.shared.downloadImage(from: urlString)
+            guard let image = await NetworkManager.shared.downloadImage(from: urlString) else { return }
             self.setToCache(image: image, for: urlString)
             
             self.image = image

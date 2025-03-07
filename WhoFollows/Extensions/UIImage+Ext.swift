@@ -29,7 +29,7 @@ enum UIImageError: LocalizedError {
 
 extension UIImage {
     
-    func saveToDisk(follower: Follower) throws -> String? {
+    func saveToDisk(follower: Follower) throws {
         guard let url = FileManager.cacheURL else {
             throw UIImageError.missingCacheURL
         }
@@ -37,11 +37,11 @@ extension UIImage {
         
         if let data = self.jpegData(compressionQuality: 0.6) {
             
-            do { return try data.writeImageData(at: itemURL) } catch { throw error }
+            do { try data.write(to: itemURL) } catch { throw error }
             
         } else if let data = self.pngData() {
             
-            do { return try data.writeImageData(at: itemURL) } catch { throw error }
+            do { try data.write(to: itemURL) } catch { throw error }
             
         } else {
             throw UIImageError.conversionFailed

@@ -36,7 +36,9 @@ extension FollowersListVC {
         
         do {
             let image = await networkManager.downloadImage(from: user.avatarUrl)
-            try coreDataController.addFollower(follower, image: image)
+            try coreDataController.addFollower(follower)
+            guard let image = image else { return }
+            try image.saveToDisk(follower: follower)
         } catch {
             presentWFAlertVCOnMainThread(
                 title: WFAlertTitleMessages.somethingWentWrong,

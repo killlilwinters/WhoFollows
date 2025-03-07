@@ -160,13 +160,12 @@ class NetworkManager {
 
 // MARK: - Image download methods
 extension NetworkManager {
-    func downloadImage(from urlString: String) async -> UIImage {
-        let placeholder = UIImage(resource: .avatarPlaceholder)
-        guard let url = URL(string: urlString) else { return placeholder }
+    func downloadImage(from urlString: String) async -> UIImage? {
+        guard let url = URL(string: urlString) else { return nil }
         
         if let (data, _) = try? await URLSession.shared.data(from: url) {
-            return UIImage(data: data) ?? placeholder
+            return UIImage(data: data)
         }
-        return placeholder
+        return nil
     }
 }

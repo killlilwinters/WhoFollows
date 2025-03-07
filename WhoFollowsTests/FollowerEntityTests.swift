@@ -14,7 +14,6 @@ extension CoreDataTests {
         let entity = FollowerEntity(context: coreDataController.context)
         entity.login = follower.login
         entity.avatarURL = follower.avatarUrl
-        entity.avatarImagePath = ""
         
         let converted = entity.convertToFollower
         

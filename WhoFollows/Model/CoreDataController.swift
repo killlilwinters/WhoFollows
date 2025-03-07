@@ -117,7 +117,7 @@ extension CoreDataController {
         }
     }
     
-    func addFollower(_ follower: Follower, image: UIImage) throws {
+    func addFollower(_ follower: Follower) throws {
         guard doesFollowerExist(login: follower.login) == false else {
             throw CoreDataError.followerAlreadyExists
         }
@@ -128,7 +128,6 @@ extension CoreDataController {
         newFollower.avatarURL = follower.avatarUrl
         
         do {
-            newFollower.avatarImagePath = try image.saveToDisk(follower: follower)
             try context.save()
         } catch {
             throw error

@@ -24,6 +24,7 @@ final class UserInfoVC: UIViewController, DataLoadingView {
     private var dataSource: UICollectionViewDiffableDataSource<Section, UserTileData>!
     // MARK: - Private Property
     private var follower: Follower!
+    private var user: User?
     private let networkManager = NetworkManager.shared
     private let coreDataController = CoreDataController.shared
     // MARK: - UI Elements
@@ -105,6 +106,7 @@ extension UserInfoVC {
                     self.userHeaderView.setUser(user)
                     self.setupTiles(with: user)
                     self.userFooterView.setUser(user)
+                    self.user = user
                 }
 // #endif
             case .failure(let error):
@@ -335,8 +337,10 @@ extension UserInfoVC: UserInfoVCDelegate {
 extension UserInfoVC {
     private func performAddFavorite() async {
         do {
-            let image = await networkManager.downloadImage(from: follower.avatarUrl)
-            try coreDataController.addFollower(follower, image: image)
+            let image = await networkManager.downloadImage(from: user?.avatarUrl ?? "")
+            try coreDataController.addFollower(follower)
+            guard let image = image else { return }
+            try image.saveToDisk(follower: follower)
         } catch {
             presentWFAlertVCOnMainThread(
                 title: WFAlertTitleMessages.somethingWentWrong,

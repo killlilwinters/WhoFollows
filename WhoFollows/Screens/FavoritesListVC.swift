@@ -16,7 +16,6 @@ final class FavoritesListVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        getFavorites()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -79,9 +78,12 @@ extension FavoritesListVC: TableViewDelegateMethods {
             // Try to download instead
             print("Downloading the image")
             Task {
-                let image = await NetworkManager.shared.downloadImage(from: favorite.avatarUrl)
-                _ = try? image.saveToDisk(follower: favorite)
-                cell.set(with: favorite, image: image)
+                if let image = await NetworkManager.shared.downloadImage(from: favorite.avatarUrl) {
+                    try? image.saveToDisk(follower: favorite)
+                    cell.set(with: favorite, image: image)
+                } else {
+                    cell.set(with: favorite, image: nil)
+                }
             }
         }
         return cell

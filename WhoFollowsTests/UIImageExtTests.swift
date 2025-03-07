@@ -47,10 +47,12 @@ extension UIImageExtTests {
         let uiImageDataHashed = uiImage.pngData()?.hashValue ?? 0
         
         do {
+            let imageURL = UIImageExtTests.cacheDirectoryURL.appendingPathComponent(follower.login).path
+            print(imageURL)
             
-            let imageURL = try uiImage.saveToDisk(follower: follower)
+            try uiImage.saveToDisk(follower: follower)
             
-            guard let returnImage = UIImage(contentsOfFile: imageURL!) else {
+            guard let returnImage = UIImage(contentsOfFile: imageURL) else {
                 return XCTFail("Failed to get image contents")
             }
             

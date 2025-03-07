@@ -34,7 +34,8 @@ extension CoreDataTests {
     
     func test_getFollower() {
         let uiImage = UIImage(resource: .avatarPlaceholder)
-        try? coreDataController.addFollower(follower, image: uiImage)
+        try? coreDataController.addFollower(follower)
+        try? uiImage.saveToDisk(follower: follower)
         
         let fetchedFollower = try? coreDataController.getFollower(login: follower.login)
         
@@ -50,7 +51,8 @@ extension CoreDataTests {
         
         // Run tested method
         do {
-            try coreDataController.addFollower(follower, image: image)
+            try coreDataController.addFollower(follower)
+            try image.saveToDisk(follower: follower)
         } catch {
             print(error.localizedDescription)
         }
@@ -67,7 +69,8 @@ extension CoreDataTests {
     
     func test_removeFollower() {
         let uiImage = UIImage(resource: .avatarPlaceholder)
-        try? coreDataController.addFollower(follower, image: uiImage)
+        try? coreDataController.addFollower(follower)
+        try? uiImage.saveToDisk(follower: follower)
         
         let savedFollower = try? coreDataController.getFollower(login: follower.login)
         guard savedFollower != nil else {
@@ -85,8 +88,10 @@ extension CoreDataTests {
         let secondFollower = Follower(login: "anotherLogin", avatarUrl: "")
         
         do {
-            try coreDataController.addFollower(firstFollower, image: uiImage)
-            try coreDataController.addFollower(secondFollower, image: uiImage)
+            try coreDataController.addFollower(firstFollower)
+            try uiImage.saveToDisk(follower: firstFollower)
+            try coreDataController.addFollower(secondFollower)
+            try uiImage.saveToDisk(follower: secondFollower)
         } catch {
             print(error.localizedDescription)
         }
@@ -117,8 +122,10 @@ extension CoreDataTests {
         let uiImage = UIImage(resource: .avatarPlaceholder)
         
         do {
-            try coreDataController.addFollower(follower, image: uiImage)
-            try coreDataController.addFollower(follower, image: uiImage)
+            try coreDataController.addFollower(follower)
+            try uiImage.saveToDisk(follower: follower)
+            try coreDataController.addFollower(follower)
+            try uiImage.saveToDisk(follower: follower)
         } catch {
             print(error.localizedDescription)
         }
