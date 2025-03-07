@@ -28,6 +28,9 @@ final class WFAvatarImageView: UIImageView {
         contentMode = .scaleAspectFit
         translatesAutoresizingMaskIntoConstraints = false
     }
+    func setOfflineImage(image: UIImage) {
+        self.image = image
+    }
     // MARK: Network request
     func downloadImage(from urlString: String) {
         // Set default so the cells don't reuse images they were previously assigned
