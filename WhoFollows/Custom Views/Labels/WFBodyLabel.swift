@@ -11,16 +11,16 @@ final class WFBodyLabel: UILabel {
 
     private override init(frame: CGRect) {
         super.init(frame: frame)
+        setupLabel()
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    init(textAlignment: NSTextAlignment, numberOfLines: Int) {
-        super.init(frame: .zero)
+    convenience init(textAlignment: NSTextAlignment, numberOfLines: Int) {
+        self.init(frame: .zero)
         self.textAlignment = textAlignment
         self.numberOfLines = numberOfLines
-        setupLabel()
     }
     private func setupLabel() {
         textColor = .secondaryLabel

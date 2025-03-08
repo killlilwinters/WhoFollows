@@ -127,6 +127,7 @@ class NetworkManager {
                 do {
                     let decoder = JSONDecoder()
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    decoder.dateDecodingStrategy = .iso8601
                     let result = try decoder.decode(User.self, from: data)
                     completion(.success(result))
                 } catch {
@@ -162,9 +163,19 @@ class NetworkManager {
 extension NetworkManager {
     func downloadImage(from urlString: String) async -> UIImage? {
         guard let url = URL(string: urlString) else { return nil }
+
+        let nsUrlString = urlString as NSString
         
+        // Check if the image is in cache already
+        if let image = imageCache.object(forKey: nsUrlString) {
+            return image
+        }
+        // Proceed to download
         if let (data, _) = try? await URLSession.shared.data(from: url) {
-            return UIImage(data: data)
+            guard let image = UIImage(data: data) else { return nil }
+            // Save to cache
+            self.imageCache.setObject(image, forKey: nsUrlString)
+            return image
         }
         return nil
     }

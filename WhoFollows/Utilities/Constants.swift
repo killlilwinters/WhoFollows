@@ -62,7 +62,7 @@ let killlilwinters = User(
     bio: "👨‍💻 " + String.init(repeating: "Swift ", count: 20) + "👨‍💻",
     followers: 24125,
     following: 13,
-    createdAt: "2023-07-08T20:37:26Z",
+    createdAt: Date(),
     location: "Kharkiv, Ukraine",
     publicRepos: 39,
     publicGists: 0

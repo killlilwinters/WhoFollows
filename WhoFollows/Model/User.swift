@@ -4,6 +4,7 @@
 //
 //  Created by Maks Winters on 05.02.2025.
 //
+import Foundation
 
 struct User: Codable, Hashable {
     let login: String
@@ -13,7 +14,7 @@ struct User: Codable, Hashable {
     var bio: String?
     let followers: Int
     let following: Int
-    let createdAt: String
+    let createdAt: Date
     var location: String?
     let publicRepos: Int
     let publicGists: Int

@@ -10,7 +10,6 @@ import UIKit
 final class WFAvatarImageView: UIImageView {
     // MARK: Private properties
     private static let placeholderImage = UIImage(resource: .avatarPlaceholder)
-    private let cache = NetworkManager.shared.imageCache
     // MARK: Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -35,33 +34,10 @@ final class WFAvatarImageView: UIImageView {
     func downloadImage(from urlString: String) {
         // Set default so the cells don't reuse images they were previously assigned
         image = WFAvatarImageView.placeholderImage
-        // Check if the image is in cache already
-        if let image = getFromCache(for: urlString) {
-            self.image = image
-            return
-        }
-        // Proceed to download
+        // Make the call
         Task { [weak self] in
             guard let self = self else { return }
-            guard let image = await NetworkManager.shared.downloadImage(from: urlString) else { return }
-            self.setToCache(image: image, for: urlString)
-            
-            self.image = image
+            self.image = await NetworkManager.shared.downloadImage(from: urlString)
         }
-    }
-}
-
-// MARK: - Caching logic
-extension WFAvatarImageView {
-    private func getFromCache(for urlString: String) -> UIImage? {
-        let nsUrlString = urlString as NSString
-        if let image = cache.object(forKey: nsUrlString) {
-            return image
-        }
-        return nil
-    }
-    private func setToCache(image: UIImage, for urlString: String) {
-        let nsUrlString = urlString as NSString
-        self.cache.setObject(image, forKey: nsUrlString)
     }
 }

@@ -85,7 +85,5 @@ extension FollowersListVC {
 }
 
 #Preview {
-    let followersListVC = FollowersListVC()
-    followersListVC.username = "killlilwinters"
-    return followersListVC
+    FollowersListVC(login: "killlilwinters")
 }

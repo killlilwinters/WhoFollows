@@ -54,6 +54,7 @@ final class WFTextField: UITextField {
         autocorrectionType = .no
         autocapitalizationType = .none
         // Other
+        clearButtonMode = .whileEditing
         attributedPlaceholder = NSAttributedString(
             string: placeholder,
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.white]

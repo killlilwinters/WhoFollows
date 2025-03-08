@@ -13,10 +13,7 @@ struct StaticDateFormatter {
     // MARK: Methods
     static func decodeDateForUser(user: User) -> String {
         let formatter = StaticDateFormatter.formatter
-        // Decode
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        guard let date = formatter.date(from: user.createdAt) else { return "Unable to resolve date..." }
+        let date = user.createdAt
         // Encode
         formatter.dateFormat = "MMM d, yyyy"
         return formatter.string(from: date)

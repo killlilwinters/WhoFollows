@@ -7,18 +7,18 @@
 
 import UIKit
 
+protocol WFAlertVCDelegate: AnyObject {
+    func didTapButton()
+}
+
 final class WFAlertVC: UIViewController {
+    // MARK: - Delegate
+    weak var delegate: WFAlertVCDelegate?
     // MARK: - Private Property
-    private let containerView: UIView = {
-        let containerView = UIView()
-        containerView.backgroundColor = .alertBackground
-        containerView.layer.cornerRadius = 20
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        return containerView
-    }()
+    private let containerView = WFAlertContainerView(frame: .zero)
     private let titleLabel = WFTitleLabel(textAlignment: .center, fontSize: 25)
     private let messageLabel = WFBodyLabel(textAlignment: .center, numberOfLines: 3)
-    private let button = WFGenericButtonVC(text: "OK", color: .systemOrange)
+    private lazy var button = WFGenericButtonVC(text: buttonTitle ?? "OK", color: .systemOrange)
     private var vStack: UIStackView = WFStack(axis: .vertical, spacing: 20)
     // MARK: - Public Property
     var alertTitle: String?
@@ -47,7 +47,7 @@ final class WFAlertVC: UIViewController {
 // MARK: - Logic
 extension WFAlertVC {
     private func setupButton() {
-        button.addAction(UIAction { _ in self.dismissVC() }, for: .touchUpInside)
+        button.addAction(UIAction { _ in self.buttonAction() }, for: .touchUpInside)
     }
 }
 
@@ -55,10 +55,12 @@ extension WFAlertVC {
 
 extension WFAlertVC {
     private func setupView() {
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         addSubVIews()
         setupLayout()
     }
-    private func dismissVC() {
+    private func buttonAction() {
+        delegate?.didTapButton()
         dismiss(animated: true)
     }
 }

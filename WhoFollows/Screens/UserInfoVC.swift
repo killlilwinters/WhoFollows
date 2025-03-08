@@ -86,13 +86,11 @@ extension UserInfoVC {
 extension UserInfoVC {
     
     private func pushFollowersListVC() {
-        let followersVC = FollowersListVC()
-        followersVC.username = follower.login
+        let followersVC = FollowersListVC(login: follower.login)
         navigationController?.pushViewController(followersVC, animated: true)
     }
     private func pushFollowingListVC() {
-        let followingVC = FollowingListVC()
-        followingVC.username = follower.login
+        let followingVC = FollowingListVC(login: follower.login)
         navigationController?.pushViewController(followingVC, animated: true)
     }
     
@@ -113,7 +111,8 @@ extension UserInfoVC {
                 presentWFAlertVCOnMainThread(
                     title: .somethingWentWrong,
                     message: error.rawValue,
-                    buttonTitle: "OK"
+                    buttonTitle: "OK",
+                    delegate: self
                 )
             }
         }
@@ -349,6 +348,15 @@ extension UserInfoVC {
             )
         }
     }
+}
+
+extension UserInfoVC: WFAlertVCDelegate {
+    func didTapButton() {
+        // We dismiss modally presented viewControllers and we pop the ones pushed onto the STACK!
+        navigationController?.popViewController(animated: true)
+        // dismiss(animated: true) - for modally presented viewController (sheets)
+    }
+    
 }
 
 #Preview {

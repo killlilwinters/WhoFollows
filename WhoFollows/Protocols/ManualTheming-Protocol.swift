@@ -28,7 +28,11 @@ extension ManualTheming where Self: UIView {
 extension ManualTheming where Self: UIViewController {
     func registerForApperanceChanges() {
         DispatchQueue.main.async {
-            self.registerForApperanceChanges()
+            self.registerForTraitChanges(
+                [UITraitUserInterfaceStyle.self],
+                handler: { (self: Self, _: UITraitCollection) in
+                    self.updateAppearance()
+                })
         }
     }
 }

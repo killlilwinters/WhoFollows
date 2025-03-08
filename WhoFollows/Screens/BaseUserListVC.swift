@@ -7,7 +7,7 @@
 import UIKit
 
 class BaseUserListVC: UIViewController, DataLoadingView {
-    // MARK: DiffableDS Enum
+    // MARK: - DiffableDS Enum
     enum Section { case main }
     
     // Network Manager
@@ -16,7 +16,7 @@ class BaseUserListVC: UIViewController, DataLoadingView {
     // Conform to DataLoadingView
     var containerView: UIView!
     
-    // MARK: Properties
+    // MARK: - Properties
     var username: String!
     var page = 1
     private var hasMoreFollowers = true
@@ -26,11 +26,22 @@ class BaseUserListVC: UIViewController, DataLoadingView {
     private var followers = [Follower]()
     private var filteredFollowers = [Follower]()
     
-    // MARK: Inits
+    // MARK: - Inits
     private var collectionView: UICollectionView!
     private var dataSource: UICollectionViewDiffableDataSource<Section, Follower>!
     
-    // MARK: ViewDidLoad
+    // MARK: - Initializer
+    init(login: String) {
+        self.username = login
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         // Setup
@@ -202,7 +213,5 @@ extension BaseUserListVC: SearchControllerMethods {
 }
 
 #Preview {
-    let baseUserListVC = BaseUserListVC()
-    baseUserListVC.username = "killlilwinters"
-    return baseUserListVC
+    BaseUserListVC(login: "killlilwinters")
 }
