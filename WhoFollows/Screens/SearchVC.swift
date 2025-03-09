@@ -64,8 +64,7 @@ extension SearchVC {
         searchButton.isEnabled = false
         searchButton.addAction(UIAction { _ in self.pushFollowersListVC() }, for: .touchUpInside)
         // Setup stacks
-        view.addSubview(searchGroupVStack)
-        view.addSubview(searchRowHStack)
+        view.addSubviews(searchGroupVStack, searchRowHStack)
         // Add VStack subviews
         searchGroupVStack.addArrangedSubview(imageLogoView)
         searchGroupVStack.addArrangedSubview(searchRowHStack)

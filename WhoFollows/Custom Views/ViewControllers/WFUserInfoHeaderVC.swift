@@ -7,10 +7,15 @@
 
 import UIKit
 
+protocol UserInfoHeaderDelegate: AnyObject {
+    func didTapShareButton(for user: User)
+    func didTapSafariButton(for user: User)
+}
+
 final class WFUserInfoHeaderVC: UIViewController {
     // MARK: - Private Property
     private var user: User?
-    weak var delegate: UserInfoVCDelegate!
+    weak var delegate: UserInfoHeaderDelegate!
     // Labels
     private let usernameLabel = WFTitleLabel(textAlignment: .left, fontSize: 35)
     private let nameLabel = WFSecondaryTitleLabel(fontSize: 20)
@@ -40,19 +45,9 @@ final class WFUserInfoHeaderVC: UIViewController {
     )
     // Custom subviews
     private let separator = WFSeparatorView(frame: .zero)
-    // Collected subviews
-    private var subviews: [UIView]!
     // MARK: - Initializers
     init() {
         super.init(nibName: nil, bundle: nil)
-        self.subviews = [
-            avatarImageView,
-            bioLabel,
-            separator,
-            vStack,
-            hStack,
-            buttonHStack
-        ]
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -109,7 +104,14 @@ extension WFUserInfoHeaderVC {
         setupUserInfo()
     }
     private func addSubViews() {
-        subviews.forEach { view.addSubview($0) }
+        view.addSubviews(
+            avatarImageView,
+            bioLabel,
+            separator,
+            vStack,
+            hStack,
+            buttonHStack
+        )
         hStack.addArrangedSubview(locationImageView)
         hStack.addArrangedSubview(locationLabel)
         [usernameLabel, nameLabel, hStack].forEach { vStack.addArrangedSubview($0) }

@@ -10,11 +10,6 @@
 import UIKit
 import SafariServices
 
-protocol UserInfoVCDelegate: AnyObject {
-    func didTapShareButton(for user: User)
-    func didTapSafariButton(for user: User)
-}
-
 final class UserInfoVC: UIViewController, DataLoadingView {
     var containerView: UIView!
     
@@ -309,7 +304,7 @@ extension UserInfoVC: UICollectionViewDelegateFlowLayout {
     }
 }
 
-extension UserInfoVC: UserInfoVCDelegate {
+extension UserInfoVC: UserInfoHeaderDelegate {
     
     func didTapShareButton(for user: User) {
         let activityView = UIActivityViewController(

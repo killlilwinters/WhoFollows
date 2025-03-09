@@ -45,8 +45,7 @@ extension FollowerCell {
 // MARK: - Setting
 extension FollowerCell {
     private func addSubViews() {
-        contentView.addSubview(avatarImageView)
-        contentView.addSubview(usernameLabel)
+        contentView.addSubviews(avatarImageView, usernameLabel)
     }
 }
 

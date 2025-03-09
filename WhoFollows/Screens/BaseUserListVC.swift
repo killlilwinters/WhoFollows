@@ -23,6 +23,7 @@ class BaseUserListVC: UIViewController, DataLoadingView {
     
     // Followers and filtering
     private var isFiltering = false
+    private var isLoadingMoreFollowers = false
     private var followers = [Follower]()
     private var filteredFollowers = [Follower]()
     
@@ -55,6 +56,7 @@ class BaseUserListVC: UIViewController, DataLoadingView {
     
     func getContent() {
         showLoadingView()
+        isLoadingMoreFollowers = true
         
         networkManager.makeFollowersRequest(for: username, page: page) { [weak self] result in
             
@@ -62,6 +64,7 @@ class BaseUserListVC: UIViewController, DataLoadingView {
             self.handleNetworkResult(result: result)
             
         }
+        isLoadingMoreFollowers = false
     }
     
     func handleNetworkResult(result: Result<[Follower], NetworkError>) {
@@ -165,18 +168,19 @@ extension BaseUserListVC {
 }
 // MARK: - Collection view delegate
 extension BaseUserListVC: UICollectionViewDelegate {
+    
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let frameHeight = scrollView.frame.height
         if offsetY + frameHeight >= contentHeight {
-            guard hasMoreFollowers else { return }
+            guard hasMoreFollowers, !isLoadingMoreFollowers else { return }
             page += 1
             getContent()
         }
-        
     }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // Getting the item
         let currentArray = isFiltering ? filteredFollowers : followers
@@ -186,11 +190,15 @@ extension BaseUserListVC: UICollectionViewDelegate {
         let navController = UINavigationController(rootViewController: detailVC)
         present(navController, animated: true)
     }
+    
 }
 // MARK: - Search Controller Setup
-extension BaseUserListVC: SearchControllerMethods {
+extension BaseUserListVC: UISearchResultsUpdating {
+    
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter = searchController.searchBar.text, !filter.isEmpty else {
+            isFiltering = false
+            updateSnapshot(with: followers)
             return
         }
         isFiltering = true
@@ -199,17 +207,15 @@ extension BaseUserListVC: SearchControllerMethods {
         }
         updateSnapshot(with: filteredFollowers)
     }
+    
     func setupSearchController() {
         let searchController = UISearchController()
         searchController.searchResultsUpdater = self
-        searchController.searchBar.delegate = self
         searchController.searchBar.placeholder = "Search followers..."
+        searchController.searchBar.autocapitalizationType = .none
         navigationItem.searchController = searchController
     }
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        isFiltering = false
-        updateSnapshot(with: followers)
-    }
+    
 }
 
 #Preview {

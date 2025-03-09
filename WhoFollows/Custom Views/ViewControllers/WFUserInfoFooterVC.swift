@@ -14,8 +14,7 @@ final class WFUserInfoFooterVC: UIViewController {
     // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.addSubview(separator)
-        view.addSubview(textLabel)
+        view.addSubviews(separator, textLabel)
         applyConstraints()
     }
     private func applyConstraints() {

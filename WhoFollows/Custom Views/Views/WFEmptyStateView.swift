@@ -28,9 +28,7 @@ class WFEmptyStateView: UIView {
     // MARK: - Setup
     private func setupView() {
         // Adding subviews
-        addSubview(messageLabel)
-        // addSubview(imageLogo)
-        addSubview(imageLogo)
+        addSubviews(messageLabel, imageLogo)
         // Message label setup
         messageLabel.numberOfLines = 3
         messageLabel.textColor = .secondaryLabel

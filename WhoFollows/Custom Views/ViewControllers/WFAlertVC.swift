@@ -78,7 +78,6 @@ extension WFAlertVC {
         vStack.addArrangedSubview(messageLabel)
         vStack.addArrangedSubview(button)
         // Other
-//        containerView.addSubview(button)
         messageLabel.text = message ?? "Unable to complete request..."
         containerView.addSubview(vStack)
     }

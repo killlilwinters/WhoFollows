@@ -74,8 +74,7 @@ extension UserInfoTileCell {
 extension UserInfoTileCell {
     private func addSubViews() {
 //        addSubview(imageView)
-        addSubview(vStack)
-        addSubview(hStack)
+        addSubviews(vStack, hStack)
         [valueLabel, imageView].forEach {
             hStack.addArrangedSubview($0)
         }

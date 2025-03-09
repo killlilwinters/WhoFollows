@@ -7,7 +7,6 @@
 import UIKit
 /// swiftlint:disable line_length
 
-typealias SearchControllerMethods = UISearchResultsUpdating & UISearchBarDelegate
 typealias TableViewDelegateMethods = UITableViewDelegate & UITableViewDataSource
 // MARK: - Enums
 enum WFSymbols {
