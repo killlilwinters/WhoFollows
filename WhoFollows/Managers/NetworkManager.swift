@@ -24,117 +24,74 @@ private enum Endpoints {
 }
 
 class NetworkManager {
+    private let decoder = JSONDecoder()
     // MARK: - Shared
     static let shared = NetworkManager()
     // MARK: - Followers per page public property
     let followersPerPage: Int = Endpoints.followersPerPage
     // MARK: - Caching
     let imageCache = NSCache<NSString, UIImage>()
+    // MARK: - Initializers
+    private init() {
+        decoder.dateDecodingStrategy = .iso8601
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+    }
     
     // MARK: - Methods
-    func makeFollowersRequest(
-        for username: String,
-        page: Int = 1,
-        completion: @escaping (Result<[Follower], NetworkError>) -> Void
-    ) {
-        self.makeRequest(with: Endpoints.followers(for: username, page: page)) { result in
-            completion(result)
-        }
+    func makeFollowersRequest(for username: String, page: Int = 1) async throws -> [Follower] {
+        try await makeRequest(with: Endpoints.followers(for: username, page: page))
     }
     
-    func makeFollowingRequest(
-        for username: String,
-        page: Int = 1,
-        completion: @escaping (Result<[Follower], NetworkError>) -> Void
-    ) {
-        self.makeRequest(with: Endpoints.following(for: username, page: page)) { result in
-            completion(result)
-        }
+    func makeFollowingRequest(for username: String, page: Int = 1) async throws -> [Follower] {
+        try await makeRequest(with: Endpoints.following(for: username, page: page))
     }
     
-    private func makeRequest(
-        with endpoint: String,
-        completion: @escaping (Result<[Follower], NetworkError>) -> Void
-    ) {
+    func makeRequest(with endpoint: String) async throws -> [Follower] {
         // Request logic
-        guard let url = URL(string: endpoint) else {
-            completion(.failure(.invalidUsername))
-            return
+        guard let url = URL(string: endpoint) else { throw NetworkError.invalidUsername }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        // Type cast to HTTPURLResponse
+        let httpResponse = response as? HTTPURLResponse
+        let responseCode = httpResponse?.statusCode
+        // Check response code
+        guard responseCode == 200 else {
+            throw NetworkError.handleStatusCode(responseCode)
         }
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if error != nil {
-                completion(.failure(.somethingWentWrong))
-                return
-            }
-            // Type cast to HTTPURLResponse
-            let httpResponse = response as? HTTPURLResponse
-            let responseCode = httpResponse?.statusCode
-            // Check response code
-            guard responseCode == 200 else {
-                completion(.failure(NetworkError.handleStatusCode(responseCode)))
-                return
-            }
-            // Check data
-            guard let data = data else {
-                completion(.failure(.invalidData))
-                return
-            }
-            // Proceed to decoding data
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let result = try decoder.decode([Follower].self, from: data)
-                completion(.success(result))
-            } catch {
-                print(error)
-                completion(.failure(.invalidData))
-            }
+        // Proceed to decoding data
+        do {
+            let result = try decoder.decode([Follower].self, from: data)
+            return result
+        } catch {
+            throw NetworkError.invalidData
         }
-        task.resume()
+        
     }
     
-    func makeUserRequest(
-        for username: String,
-        completion: @escaping (Result<User, NetworkError>) -> Void
-    ) {
+    func makeUserRequest(for username: String) async throws -> User {
         // Request logic
         let endpoint = Endpoints.user(for: username)
         
         guard let url = URL(string: endpoint) else {
-            completion(.failure(.invalidUsername))
-            return
+            throw NetworkError.invalidUsername
         }
-        let task = URLSession.shared.dataTask(with: url) { data, response, error in
-            if error != nil {
-                completion(.failure(.somethingWentWrong))
-                return
-            }
-            // Type cast to HTTPURLResponse
-            let httpResponse = response as? HTTPURLResponse
-            let responseCode = httpResponse?.statusCode
-            // Check response code
-            guard responseCode == 200 else {
-                completion(.failure(NetworkError.handleStatusCode(responseCode)))
-                return
-            }
-            // Check data
-            guard let data = data else {
-                completion(.failure(.invalidData))
-                return
-            }
-            // Proceed to decoding data
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                decoder.dateDecodingStrategy = .iso8601
-                let result = try decoder.decode(User.self, from: data)
-                completion(.success(result))
-            } catch {
-                print(error)
-                completion(.failure(.invalidData))
-            }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        // Type cast to HTTPURLResponse
+        let httpResponse = response as? HTTPURLResponse
+        let responseCode = httpResponse?.statusCode
+        // Check response code
+        guard responseCode == 200 else {
+            throw NetworkError.handleStatusCode(responseCode)
         }
-        task.resume()
+        // Proceed to decoding data
+        do {
+            let user = try decoder.decode(User.self, from: data)
+            return user
+        } catch {
+            throw NetworkError.invalidData
+        }
     }
 }
 

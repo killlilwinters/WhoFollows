@@ -29,8 +29,7 @@ final class WFAvatarImageView: UIImageView {
         // Set default so the cells don't reuse images they were previously assigned
         image = WFAvatarImageView.placeholderImage
         // Make the call
-        Task { [weak self] in
-            guard let self = self else { return }
+        Task {
             self.image = await NetworkManager.shared.downloadImage(fromURL: urlString)
         }
     }

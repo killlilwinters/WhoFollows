@@ -16,10 +16,9 @@ class FollowingListVC: BaseUserListVC {
     
     override func getContent() {
         showLoadingView()
-        
-        NetworkManager.shared.makeFollowingRequest(for: username, page: page) { [weak self] result in
-            guard let self = self else { return }
-            self.handleNetworkResult(result: result)
+        Task {
+            let followers = try await networkManager.makeFollowingRequest(for: username, page: page)
+            handleNetworkResult(with: followers)
         }
     }
     

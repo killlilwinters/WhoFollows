@@ -18,15 +18,14 @@ class FollowersListVC: BaseUserListVC {
     
     override func getContent() {
         showLoadingView()
-        
-        networkManager.makeFollowersRequest(for: username, page: page) { [weak self] result in
-            guard let self = self else { return }
-            self.handleNetworkResult(result: result)
+        Task {
+            let followers = try await networkManager.makeFollowersRequest(for: username, page: page)
+            handleNetworkResult(with: followers)
         }
     }
 }
 
-// MARK: -
+// MARK: - Favorites persistence
 extension FollowersListVC {
     
     private func performAddFavorite(user: User) async {
@@ -40,44 +39,28 @@ extension FollowersListVC {
             guard let image = image else { return }
             try image.saveToDisk(follower: follower)
         } catch {
-            presentWFAlertVCOnMainThread(
-                title: WFAlertTitleMessages.somethingWentWrong,
-                message: error.localizedDescription,
-                buttonTitle: "OK"
-            )
+            handleErrorResult(error: error)
         }
     }
     
     @objc private func saveToFavorites() {
         // Check if the user is already in the database
         guard coreDataController.doesFollowerExist(login: username) != true else {
-            presentWFAlertVCOnMainThread(
-                title: WFAlertTitleMessages.userExists,
-                message: "Follower \"\(username ?? "")\" is already in your favorites list.",
-                buttonTitle: "OK"
-            )
+            
+            let message = "Follower \"\(username ?? "")\" is already in your favorites list."
+            presentWFAlert(title: WFAlertTitleMessages.userExists, message: message)
             return
+            
         }
-        
         // If the user is not in the database - start the network call
         showLoadingView()
-        
-        networkManager.makeUserRequest(for: username) { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let user):
-                // Use task to ensure all async code and UI updates run in order
-                Task {
-                    await self.performAddFavorite(user: user)
-                    self.dismissLoadingView()
-                }
-            case .failure(let error):
-                self.presentWFAlertVCOnMainThread(
-                    title: .somethingWentWrong,
-                    message: error.localizedDescription,
-                    buttonTitle: "OK"
-                )
+        Task {
+            do {
+                let user = try await networkManager.makeUserRequest(for: username)
+                await self.performAddFavorite(user: user)
+                self.dismissLoadingView()
+            } catch {
+                handleErrorResult(error: error)
             }
         }
     }

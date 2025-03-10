@@ -51,12 +51,11 @@ extension UserInfoVC {
     }
     @objc func favoriteUser() {
         guard coreDataController.doesFollowerExist(login: follower.login) != true else {
-            presentWFAlertVCOnMainThread(
-                title: WFAlertTitleMessages.userExists,
-                message: "Follower \"\(follower.login)\" is already in your favorites list.",
-                buttonTitle: "OK"
-            )
+            
+            let message = "Follower \"\(follower.login)\" is already in your favorites list."
+            presentWFAlert(title: WFAlertTitleMessages.userExists, message: message)
             return
+            
         }
         
         Task {
@@ -80,26 +79,25 @@ extension UserInfoVC {
         navigationController?.pushViewController(followingVC, animated: true)
     }
     
-    func getUser() {
-        networkManager.makeUserRequest(for: follower.login) { [weak self] (result: Result<User, NetworkError>) in
-            guard let self = self else { return }
-            switch result {
-            case .success(let user):
-                DispatchQueue.main.async {
-                    self.userHeaderView.setUser(user)
-                    self.setupTiles(with: user)
-                    self.userFooterView.setUser(user)
-                    self.user = user
-                }
-            case .failure(let error):
-                presentWFAlertVCOnMainThread(
-                    title: .somethingWentWrong,
-                    message: error.rawValue,
-                    buttonTitle: "OK",
-                    delegate: self
-                )
+    private func getUser() {
+        showLoadingView()
+        Task {
+            do {
+                let user = try await networkManager.makeUserRequest(for: follower.login)
+                setUser(user)
+                dismissLoadingView()
+            } catch {
+                // Setting self as a delegate since UserInfoVC will have to dismiss if the user is not found
+                handleErrorResult(error: error, delegate: self)
             }
         }
+    }
+    
+    private func setUser(_ user: User) {
+        self.userHeaderView.setUser(user)
+        self.setupTiles(with: user)
+        self.userFooterView.setUser(user)
+        self.user = user
     }
     
 }
@@ -305,11 +303,7 @@ extension UserInfoVC: UserInfoHeaderDelegate {
     
     func didTapSafariButton(for user: User) {
         guard let url = URL(string: user.htmlUrl) else {
-            presentWFAlertVCOnMainThread(
-                title: .invalidURL,
-                message: "The URL attached to this user is invalid",
-                buttonTitle: "OK"
-            )
+            presentWFAlert(title: .invalidURL, message: "The URL attached to this user is invalid")
             return
         }
         presentSafariVC(with: url)
@@ -327,11 +321,7 @@ extension UserInfoVC {
             guard let image = image else { return }
             try image.saveToDisk(follower: follower)
         } catch {
-            presentWFAlertVCOnMainThread(
-                title: WFAlertTitleMessages.somethingWentWrong,
-                message: error.localizedDescription,
-                buttonTitle: "OK"
-            )
+            presentWFAlert(title: WFAlertTitleMessages.somethingWentWrong, message: error.localizedDescription)
         }
     }
 }

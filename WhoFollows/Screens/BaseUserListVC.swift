@@ -58,33 +58,25 @@ class BaseUserListVC: UIViewController, DataLoadingView {
         showLoadingView()
         isLoadingMoreFollowers = true
         
-        networkManager.makeFollowersRequest(for: username, page: page) { [weak self] result in
-            guard let self = self else { return }
-            self.handleNetworkResult(result: result)
+        Task {
+            do {
+                let followers = try await networkManager.makeFollowersRequest(for: username, page: page)
+                handleNetworkResult(with: followers)
+            } catch {
+                handleErrorResult(error: error)
+            }
         }
-        
         isLoadingMoreFollowers = false
     }
     
-    func handleNetworkResult(result: Result<[Follower], NetworkError>) {
-        self.dismissLoadingView()
-        switch result {
-        case .success(let followers):
-            
-            checkIfHasMoreFollowers(followers)
-            self.followers.append(contentsOf: followers)
-            self.updateSnapshot(with: followers)
-            checkIfHasFollowers(followers)
-            
-        case .failure(let error):
-            
-            self.presentWFAlertVCOnMainThread(
-                title: .somethingWentWrong,
-                message: error.rawValue,
-                buttonTitle: "OK"
-            )
-            
-        }
+    func handleNetworkResult(with followers: [Follower]) {
+        dismissLoadingView()
+        checkIfHasMoreFollowers(followers)
+        
+        self.followers.append(contentsOf: followers)
+        updateSnapshot(with: followers)
+        
+        checkIfHasFollowers(followers)
     }
     
 }

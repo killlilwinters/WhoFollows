@@ -54,10 +54,10 @@ extension FollowerCell {
     private func setupLayout() {
         // Username Label
         NSLayoutConstraint.activate([
-            usernameLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            usernameLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -20),
             usernameLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 15),
-            usernameLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            usernameLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
+            usernameLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 15),
+            usernameLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15)
         ])
         // Set required priority for label so it doesn't move
         usernameLabel.setContentHuggingPriority(
@@ -70,9 +70,9 @@ extension FollowerCell {
         )
         // Avatar Image View
         NSLayoutConstraint.activate([
-            avatarImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            avatarImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            avatarImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
+            avatarImageView.topAnchor.constraint(equalTo: topAnchor),
+            avatarImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            avatarImageView.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
     }
 }

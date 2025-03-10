@@ -108,11 +108,7 @@ extension FavoritesListVC: TableViewDelegateMethods {
                 try coreDataController.removeFollower(login: favoriteToDelete.login)
                 try UIImage.removeFromDisk(login: favoriteToDelete.login)
             } catch {
-                presentWFAlertVCOnMainThread(
-                    title: .somethingWentWrong,
-                    message: error.localizedDescription,
-                    buttonTitle: "OK"
-                )
+                presentWFAlert(title: .somethingWentWrong, message: error.localizedDescription)
                 return
             }
             favorites.remove(at: indexPath.row)
