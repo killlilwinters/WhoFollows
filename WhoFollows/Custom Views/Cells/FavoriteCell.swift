@@ -7,31 +7,33 @@
 
 import UIKit
 
-class FavoriteCell: UITableViewCell {
-
-    // MARK: Reuse ID
+final class FavoriteCell: UITableViewCell {
+    // MARK: - Reuse ID
     static let reuseID = "FavoriteCell"
-    // MARK: Private properties
+    // MARK: - Private properties
     private let avatarImageView = WFAvatarImageView(frame: .zero)
     private let usernameLabel = WFSecondaryTitleLabel()
     private let hStack = WFStack(axis: .horizontal, spacing: 12)
-    
+    // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupCell()
     }
-    
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    // MARK: - Set method
     func set(with follower: Follower, image: UIImage?) {
         usernameLabel.text = follower.login
         
         guard let image = image else { return }
         avatarImageView.setOfflineImage(image: image)
     }
+}
+
+// MARK: - Setting
+extension FavoriteCell {
     
     private func setupCell() {
         usernameLabel.text = "This is a user"
@@ -42,6 +44,11 @@ class FavoriteCell: UITableViewCell {
         
         accessoryType = .disclosureIndicator
     }
+    
+}
+
+// MARK: - Layout
+extension FavoriteCell {
     
     func setupConstraints() {
         let padding: CGFloat = 12
@@ -56,6 +63,7 @@ class FavoriteCell: UITableViewCell {
             avatarImageView.widthAnchor.constraint(equalToConstant: width)
         ])
     }
+    
 }
 
 #Preview {

@@ -13,15 +13,16 @@ final class WFTitleLabel: UILabel {
         super.init(frame: frame)
         setupLabel()
     }
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     convenience init(textAlignment: NSTextAlignment, fontSize: CGFloat) {
         self.init(frame: .zero)
         self.textAlignment = textAlignment
         self.font = UIFont(descriptor: .preferredFontDescriptor(withTextStyle: .headline), size: fontSize)
     }
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private func setupLabel() {
         textColor = .label
         adjustsFontSizeToFitWidth = false
@@ -30,4 +31,5 @@ final class WFTitleLabel: UILabel {
         numberOfLines = 1
         translatesAutoresizingMaskIntoConstraints = false
     }
+    
 }

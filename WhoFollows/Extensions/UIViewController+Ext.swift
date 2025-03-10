@@ -9,7 +9,12 @@ import UIKit
 import SafariServices
 
 extension UIViewController {
-    func presentWFAlertVCOnMainThread(title: WFAlertTitleMessages, message: String, buttonTitle: String, delegate: WFAlertVCDelegate? = nil) {
+    func presentWFAlertVCOnMainThread(
+        title: WFAlertTitleMessages,
+        message: String,
+        buttonTitle: String,
+        delegate: WFAlertVCDelegate? = nil
+    ) {
         let titleString = title.rawValue
         DispatchQueue.main.async {
             let alertVC = WFAlertVC(alertTitle: titleString, message: message, buttonTitle: buttonTitle)

@@ -18,10 +18,9 @@ class FollowingListVC: BaseUserListVC {
         showLoadingView()
         
         NetworkManager.shared.makeFollowingRequest(for: username, page: page) { [weak self] result in
-            
             guard let self = self else { return }
             self.handleNetworkResult(result: result)
-            
         }
     }
+    
 }

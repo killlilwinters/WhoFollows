@@ -42,7 +42,7 @@ class BaseUserListVC: UIViewController, DataLoadingView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - ViewDidLoad
+    // MARK: - Override Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         // Setup
@@ -59,11 +59,10 @@ class BaseUserListVC: UIViewController, DataLoadingView {
         isLoadingMoreFollowers = true
         
         networkManager.makeFollowersRequest(for: username, page: page) { [weak self] result in
-            
             guard let self = self else { return }
             self.handleNetworkResult(result: result)
-            
         }
+        
         isLoadingMoreFollowers = false
     }
     
@@ -71,16 +70,20 @@ class BaseUserListVC: UIViewController, DataLoadingView {
         self.dismissLoadingView()
         switch result {
         case .success(let followers):
+            
             checkIfHasMoreFollowers(followers)
             self.followers.append(contentsOf: followers)
             self.updateSnapshot(with: followers)
             checkIfHasFollowers(followers)
+            
         case .failure(let error):
+            
             self.presentWFAlertVCOnMainThread(
                 title: .somethingWentWrong,
                 message: error.rawValue,
                 buttonTitle: "OK"
             )
+            
         }
     }
     

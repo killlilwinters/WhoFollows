@@ -43,16 +43,7 @@ final class UserInfoVC: UIViewController, DataLoadingView {
         navigationController?.setNavigationBarHidden(false, animated: true)
     }
 }
-#if DEBUG
-// MARK: - DEBUG
-extension UserInfoVC {
-    func setUser(_ user: User) {
-        self.userHeaderView.setUser(user)
-        self.setupTiles(with: user)
-        self.userFooterView.setUser(user)
-    }
-}
-#endif
+
 // MARK: - UIBarButtons
 extension UserInfoVC {
     @objc func dismissVC() {
@@ -94,14 +85,12 @@ extension UserInfoVC {
             guard let self = self else { return }
             switch result {
             case .success(let user):
-// #if !DEBUG
                 DispatchQueue.main.async {
                     self.userHeaderView.setUser(user)
                     self.setupTiles(with: user)
                     self.userFooterView.setUser(user)
                     self.user = user
                 }
-// #endif
             case .failure(let error):
                 presentWFAlertVCOnMainThread(
                     title: .somethingWentWrong,
@@ -168,12 +157,12 @@ extension UserInfoVC {
         collectionView.register(
             WFHeaderReusableView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: WFHeaderReusableView.reuseId
+            withReuseIdentifier: WFHeaderReusableView.reuseID
         )
         collectionView.register(
             WFFooterReusableView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: WFFooterReusableView.reuseId
+            withReuseIdentifier: WFFooterReusableView.reuseID
         )
     }
     private func setupDataSource() {
@@ -200,7 +189,7 @@ extension UserInfoVC {
             if kind == UICollectionView.elementKindSectionHeader {
                 guard let header = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
-                    withReuseIdentifier: WFHeaderReusableView.reuseId,
+                    withReuseIdentifier: WFHeaderReusableView.reuseID,
                     for: indexPath
                 ) as? WFHeaderReusableView else {
                     fatalError("Could not dequeue WFHeaderReusableView as the header")
@@ -213,7 +202,7 @@ extension UserInfoVC {
             if kind == UICollectionView.elementKindSectionFooter {
                 guard let footer = collectionView.dequeueReusableSupplementaryView(
                     ofKind: kind,
-                    withReuseIdentifier: WFFooterReusableView.reuseId,
+                    withReuseIdentifier: WFFooterReusableView.reuseID,
                     for: indexPath
                 ) as? WFFooterReusableView else {
                     fatalError("Could not dequeue WFFooterReusableView as the footer")
@@ -331,8 +320,10 @@ extension UserInfoVC: UserInfoHeaderDelegate {
 extension UserInfoVC {
     private func performAddFavorite() async {
         do {
-            let image = await networkManager.downloadImage(from: user?.avatarUrl ?? "")
+            // Add follower
             try coreDataController.addFollower(follower)
+            // Try to save the avatar image
+            let image = await networkManager.downloadImage(fromURL: user?.avatarUrl ?? "")
             guard let image = image else { return }
             try image.saveToDisk(follower: follower)
         } catch {
@@ -355,7 +346,5 @@ extension UserInfoVC: WFAlertVCDelegate {
 }
 
 #Preview {
-    let userInfoVC = UserInfoVC(follower: Follower(login: "killlilwinters", avatarUrl: "123.com"))
-    userInfoVC.setUser(killlilwinters)
-    return userInfoVC
+    UserInfoVC(follower: Follower(login: "killlilwinters", avatarUrl: "123.com"))
 }

@@ -19,11 +19,12 @@ final class WFAlertVC: UIViewController {
     private let titleLabel = WFTitleLabel(textAlignment: .center, fontSize: 25)
     private let messageLabel = WFBodyLabel(textAlignment: .center, numberOfLines: 3)
     private lazy var button = WFGenericButtonVC(text: buttonTitle ?? "OK", color: .systemOrange)
+    // MARK: - Stacks
     private var vStack: UIStackView = WFStack(axis: .vertical, spacing: 20)
-    // MARK: - Public Property
-    var alertTitle: String?
-    var message: String?
-    var buttonTitle: String?
+    // MARK: - Public properties
+    private var alertTitle: String?
+    private var message: String?
+    private var buttonTitle: String?
     // MARK: - Initializers
     init(alertTitle: String? = nil, message: String? = nil, buttonTitle: String? = nil) {
         super.init(nibName: nil, bundle: nil)
@@ -39,7 +40,6 @@ final class WFAlertVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
-        setupButton()
     }
 
 }
@@ -52,12 +52,13 @@ extension WFAlertVC {
 }
 
 // MARK: - Setting Views
-
 extension WFAlertVC {
     private func setupView() {
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        addSubVIews()
+        addSubViews()
         setupLayout()
+        setupButton()
+        setupContents()
     }
     private func buttonAction() {
         delegate?.didTapButton()
@@ -67,19 +68,20 @@ extension WFAlertVC {
 
 // MARK: - Setting
 extension WFAlertVC {
-    private func addSubVIews() {
+    private func addSubViews() {
         // Add container
         view.addSubview(containerView)
-        titleLabel.text = alertTitle
         // Setup vStack
         view.addSubview(vStack)
         vStack.alignment = .center
-        vStack.addArrangedSubview(titleLabel)
-        vStack.addArrangedSubview(messageLabel)
-        vStack.addArrangedSubview(button)
+        vStack.addArrangedSubviews(titleLabel, messageLabel, button)
         // Other
-        messageLabel.text = message ?? "Unable to complete request..."
         containerView.addSubview(vStack)
+    }
+    private func setupContents() {
+        titleLabel.text = alertTitle
+        messageLabel.text = message ?? "Unable to complete request..."
+        // The button's title is set in it's initializer lazily
     }
 }
 
@@ -88,8 +90,7 @@ extension WFAlertVC {
     private func setupLayout() {
         // Container view
         NSLayoutConstraint.activate([
-            containerView.topAnchor.constraint(equalTo: vStack.topAnchor),
-            containerView.topAnchor.constraint(equalTo: titleLabel.topAnchor, constant: -20),
+            containerView.topAnchor.constraint(equalTo: vStack.topAnchor, constant: -20),
             containerView.bottomAnchor.constraint(equalTo: button.bottomAnchor, constant: 15),
             containerView.leadingAnchor.constraint(equalTo: vStack.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: vStack.trailingAnchor)

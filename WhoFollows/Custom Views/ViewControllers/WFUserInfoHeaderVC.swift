@@ -63,12 +63,11 @@ final class WFUserInfoHeaderVC: UIViewController {
         avatarImageView.roundImage()
     }
     
-    func getHeaderHeight() -> CGFloat {
-        view.layoutIfNeeded()
-        let totalHeight = [avatarImageView, bioLabel, shareButton, separator]
-            .reduce(into: 0) { $0 += $1.frame.height }
-        return totalHeight + 90
+    func setUser(_ user: User) {
+        self.user = user
+        setupUserInfo()
     }
+    
 }
 
 // MARK: - Logic
@@ -92,17 +91,14 @@ extension WFUserInfoHeaderVC {
         addSubViews()
         setupLayout()
         setupUserInfo()
-        setupPinSystemImageView()
+        setupLocationImageView()
         setupButtons()
     }
 }
 
 // MARK: - Setting
 extension WFUserInfoHeaderVC {
-    func setUser(_ user: User) {
-        self.user = user
-        setupUserInfo()
-    }
+    
     private func addSubViews() {
         view.addSubviews(
             avatarImageView,
@@ -112,9 +108,9 @@ extension WFUserInfoHeaderVC {
             hStack,
             buttonHStack
         )
-        hStack.addArrangedSubview(locationImageView)
-        hStack.addArrangedSubview(locationLabel)
-        [usernameLabel, nameLabel, hStack].forEach { vStack.addArrangedSubview($0) }
+        hStack.addArrangedSubviews(locationImageView, locationLabel)
+        vStack.addArrangedSubviews(usernameLabel, nameLabel, hStack)
+        buttonHStack.addArrangedSubviews()
         buttonHStack.addArrangedSubview(shareButton)
         buttonHStack.addArrangedSubview(safariButton)
     }
@@ -123,62 +119,72 @@ extension WFUserInfoHeaderVC {
         nameLabel.text = user?.name ?? "This user hasn't set a name."
         locationLabel.text = user?.location ?? " -"
         bioLabel.text = user?.bio ?? "This user hasn't set a bio."
-        avatarImageView.downloadImage(from: user?.avatarUrl ?? "")
+        avatarImageView.downloadImage(fromURL: user?.avatarUrl ?? "")
     }
-    private func setupPinSystemImageView() {
-        // Location systemImage view
+    private func setupLocationImageView() {
         locationImageView.tintColor = .secondaryLabel
         locationImageView.contentMode = .scaleAspectFit
+        locationImageView.translatesAutoresizingMaskIntoConstraints = false
     }
     private func setupButtons() {
         shareButton.addAction(UIAction { _ in self.shareButtonAction() }, for: .touchUpInside)
         safariButton.addAction(UIAction { _ in self.safariButtonAction() }, for: .touchUpInside)
     }
+    
 }
 
 // MARK: - Layout
 extension WFUserInfoHeaderVC {
+    
+    func getHeaderHeight() -> CGFloat {
+        view.layoutIfNeeded()
+        let totalHeight = [avatarImageView, bioLabel, shareButton, separator]
+            .reduce(into: 0) { $0 += $1.frame.height }
+        return totalHeight + 90
+    }
+    
     private func setupLayout() {
         let padding: CGFloat = 20
+        let paddingVertical = view.bounds.height / 25
         let widthConstraintMultiplier: CGFloat = 0.9
         
-        locationImageView.translatesAutoresizingMaskIntoConstraints = false
+        // avatarImageView
         NSLayoutConstraint.activate([
             avatarImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
             avatarImageView.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.35),
             avatarImageView.heightAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.35),
             avatarImageView.topAnchor.constraint(equalTo: view.topAnchor, constant: padding)
         ])
-        
+        // vStack
         NSLayoutConstraint.activate([
             vStack.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
             vStack.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: padding)
         ])
-        
+        // Labels
         NSLayoutConstraint.activate([
             usernameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5),
             nameLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5),
             locationLabel.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: 0.5)
         ])
-        
-        let paddingVertical = view.bounds.height / 25
+        // bioLabel
         NSLayoutConstraint.activate([
             bioLabel.topAnchor.constraint(equalTo: vStack.bottomAnchor, constant: paddingVertical),
             bioLabel.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: widthConstraintMultiplier),
             bioLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
-        
+        // buttonHStack
         NSLayoutConstraint.activate([
             buttonHStack.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: widthConstraintMultiplier),
             buttonHStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             buttonHStack.topAnchor.constraint(equalTo: bioLabel.bottomAnchor, constant: padding)
         ])
-    
+        // separator
         NSLayoutConstraint.activate([
             separator.topAnchor.constraint(equalTo: buttonHStack.bottomAnchor, constant: padding),
             separator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             separator.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: widthConstraintMultiplier)
         ])
+        
     }
 }
 

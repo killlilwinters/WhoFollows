@@ -10,12 +10,12 @@
 import UIKit
 
 final class FollowerCell: UICollectionViewCell {
-    // MARK: Reuse ID
+    // MARK: - Reuse ID
     static let reuseId = "FollowerCell"
-    // MARK: Private properties
+    // MARK: - Private properties
     private let avatarImageView = WFAvatarImageView(frame: .zero)
     private let usernameLabel = WFTitleLabel(textAlignment: .center, fontSize: 20)
-    // MARK: Init
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCell()
@@ -25,14 +25,16 @@ final class FollowerCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    // MARK: - Set method
     func set(follower: Follower) {
         usernameLabel.text = follower.login
-        avatarImageView.downloadImage(from: follower.avatarUrl)
+        avatarImageView.downloadImage(fromURL: follower.avatarUrl)
     }
 }
 
-// MARK: - Setting Views
+// MARK: - Setting
 extension FollowerCell {
+    
     private func setupCell() {
         layer.cornerRadius = 10
         layer.borderWidth = 5
@@ -40,13 +42,11 @@ extension FollowerCell {
         addSubViews()
         setupLayout()
     }
-}
-
-// MARK: - Setting
-extension FollowerCell {
+    
     private func addSubViews() {
         contentView.addSubviews(avatarImageView, usernameLabel)
     }
+    
 }
 
 // MARK: - Layout

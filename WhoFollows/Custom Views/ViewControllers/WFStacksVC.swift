@@ -8,23 +8,21 @@
 import UIKit
 
 final class WFStack: UIStackView {
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupStackView()
+        self.translatesAutoresizingMaskIntoConstraints = false
     }
 
     @available(*, unavailable)
     required init(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    init(axis: NSLayoutConstraint.Axis, spacing: CGFloat, alignment: Alignment = .fill) {
-        super.init(frame: .zero)
+    convenience init(axis: NSLayoutConstraint.Axis, spacing: CGFloat, alignment: Alignment = .fill) {
+        self.init(frame: .zero)
         self.axis = axis
         self.spacing = spacing
         self.alignment = alignment
-        setupStackView()
     }
-    private func setupStackView() {
-        self.translatesAutoresizingMaskIntoConstraints = false
-    }
+    
 }

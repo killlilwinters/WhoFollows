@@ -13,14 +13,15 @@ class WFSecondaryTitleLabel: UILabel {
         super.init(frame: frame)
         setupLabel()
     }
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(codeer:) has not been implemented")
-    }
     convenience init(fontSize: CGFloat) {
         self.init(frame: .zero)
         font = UIFont.systemFont(ofSize: fontSize, weight: .medium)
     }
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(codeer:) has not been implemented")
+    }
+    
     private func setupLabel() {
         textColor = .secondaryLabel
         adjustsFontSizeToFitWidth = true

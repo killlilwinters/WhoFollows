@@ -39,11 +39,13 @@ class WFEmptyStateView: UIView {
     }
     // MARK: - Layout setup
     private func setupLayout() {
+        // messageLabel
         NSLayoutConstraint.activate([
             messageLabel.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8),
             messageLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -125),
             messageLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
+        // imageLogo
         NSLayoutConstraint.activate([
             imageLogo.centerXAnchor.constraint(equalTo: trailingAnchor, constant: -30),
             imageLogo.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -150)

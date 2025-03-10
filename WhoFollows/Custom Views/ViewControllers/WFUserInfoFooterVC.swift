@@ -17,21 +17,26 @@ final class WFUserInfoFooterVC: UIViewController {
         view.addSubviews(separator, textLabel)
         applyConstraints()
     }
+    
+    func setUser(_ user: User) {
+        textLabel.text = StaticDateFormatter.decodeDateForUser(user: user)
+    }
+    
     private func applyConstraints() {
         let padding: CGFloat = 20
         let widthConstraintMultiplier: CGFloat = 0.9
+        
+        // separator
         NSLayoutConstraint.activate([
             separator.bottomAnchor.constraint(equalTo: textLabel.topAnchor, constant: -padding),
             separator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             separator.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: widthConstraintMultiplier)
         ])
+        // textLabel
         NSLayoutConstraint.activate([
             textLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             textLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
-    }
-    func setUser(_ user: User) {
-        textLabel.text = StaticDateFormatter.decodeDateForUser(user: user)
     }
 
 }

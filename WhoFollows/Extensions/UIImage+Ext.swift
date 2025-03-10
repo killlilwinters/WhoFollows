@@ -7,26 +7,6 @@
 
 import UIKit
 
-enum UIImageError: LocalizedError {
-    case missingCacheURL
-    case conversionFailed
-    case dataWritingFailed
-    case deletionFailed
-    
-    var errorDescription: String? {
-        switch self {
-        case .missingCacheURL:
-            return "Cache URL is missing"
-        case .conversionFailed:
-            return "Conversion of UIImage to Data failed"
-        case .dataWritingFailed:
-            return "Writing Data to disk failed"
-        case .deletionFailed:
-            return "Deleting file from disk failed"
-        }
-    }
-}
-
 extension UIImage {
     
     func saveToDisk(follower: Follower) throws {

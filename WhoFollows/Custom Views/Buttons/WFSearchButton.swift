@@ -39,6 +39,5 @@ final class WFSearchButton: UIButton {
 }
 
 #Preview {
-    let button = WFSearchButton()
-    return button
+    WFSearchButton()
 }

@@ -20,10 +20,8 @@ class FollowersListVC: BaseUserListVC {
         showLoadingView()
         
         networkManager.makeFollowersRequest(for: username, page: page) { [weak self] result in
-            
             guard let self = self else { return }
             self.handleNetworkResult(result: result)
-            
         }
     }
 }
@@ -35,8 +33,10 @@ extension FollowersListVC {
         let follower = user.convertToFollower()
         
         do {
-            let image = await networkManager.downloadImage(from: user.avatarUrl)
+            // Add follower
             try coreDataController.addFollower(follower)
+            // Try to save the avatar image
+            let image = await networkManager.downloadImage(fromURL: user.avatarUrl)
             guard let image = image else { return }
             try image.saveToDisk(follower: follower)
         } catch {

@@ -30,10 +30,8 @@ class NetworkManager {
     let followersPerPage: Int = Endpoints.followersPerPage
     // MARK: - Caching
     let imageCache = NSCache<NSString, UIImage>()
-    // MARK: - Private init
-    private init() {}
-    // MARK: - Methods
     
+    // MARK: - Methods
     func makeFollowersRequest(
         for username: String,
         page: Int = 1,
@@ -56,114 +54,96 @@ class NetworkManager {
     
     private func makeRequest(
         with endpoint: String,
-        completion: @escaping (Result<[Follower], NetworkError>) -> Void) {
-            // Request logic
-            
-            guard let url = URL(string: endpoint) else {
-                completion(.failure(.invalidUsername))
+        completion: @escaping (Result<[Follower], NetworkError>) -> Void
+    ) {
+        // Request logic
+        guard let url = URL(string: endpoint) else {
+            completion(.failure(.invalidUsername))
+            return
+        }
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if error != nil {
+                completion(.failure(.somethingWentWrong))
                 return
             }
-            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                if error != nil {
-                    completion(.failure(.somethingWentWrong))
-                    return
-                }
-                // Type cast to HTTPURLResponse
-                let httpResponse = response as? HTTPURLResponse
-                let responseCode = httpResponse?.statusCode
-                // Check response code
-                guard responseCode == 200 else {
-                    completion(.failure(self.handleStatusCode(responseCode)))
-                    return
-                }
-                // Check data
-                guard let data = data else {
-                    completion(.failure(.invalidData))
-                    return
-                }
-                // Proceed to decoding data
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let result = try decoder.decode([Follower].self, from: data)
-                    completion(.success(result))
-                } catch {
-                    print(error)
-                    completion(.failure(.invalidData))
-                }
+            // Type cast to HTTPURLResponse
+            let httpResponse = response as? HTTPURLResponse
+            let responseCode = httpResponse?.statusCode
+            // Check response code
+            guard responseCode == 200 else {
+                completion(.failure(NetworkError.handleStatusCode(responseCode)))
+                return
             }
-            task.resume()
+            // Check data
+            guard let data = data else {
+                completion(.failure(.invalidData))
+                return
+            }
+            // Proceed to decoding data
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                let result = try decoder.decode([Follower].self, from: data)
+                completion(.success(result))
+            } catch {
+                print(error)
+                completion(.failure(.invalidData))
+            }
         }
-
+        task.resume()
+    }
+    
     func makeUserRequest(
         for username: String,
-        completion: @escaping (Result<User, NetworkError>) -> Void) {
-            // Request logic
-            let endpoint = Endpoints.user(for: username)
-            
-            guard let url = URL(string: endpoint) else {
-                completion(.failure(.invalidUsername))
+        completion: @escaping (Result<User, NetworkError>) -> Void
+    ) {
+        // Request logic
+        let endpoint = Endpoints.user(for: username)
+        
+        guard let url = URL(string: endpoint) else {
+            completion(.failure(.invalidUsername))
+            return
+        }
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if error != nil {
+                completion(.failure(.somethingWentWrong))
                 return
             }
-            let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                if error != nil {
-                    completion(.failure(.somethingWentWrong))
-                    return
-                }
-                // Type cast to HTTPURLResponse
-                let httpResponse = response as? HTTPURLResponse
-                let responseCode = httpResponse?.statusCode
-                // Check response code
-                guard responseCode == 200 else {
-                    completion(.failure(self.handleStatusCode(responseCode)))
-                    return
-                }
-                // Check data
-                guard let data = data else {
-                    completion(.failure(.invalidData))
-                    return
-                }
-                // Proceed to decoding data
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    decoder.dateDecodingStrategy = .iso8601
-                    let result = try decoder.decode(User.self, from: data)
-                    completion(.success(result))
-                } catch {
-                    print(error)
-                    completion(.failure(.invalidData))
-                }
+            // Type cast to HTTPURLResponse
+            let httpResponse = response as? HTTPURLResponse
+            let responseCode = httpResponse?.statusCode
+            // Check response code
+            guard responseCode == 200 else {
+                completion(.failure(NetworkError.handleStatusCode(responseCode)))
+                return
             }
-            task.resume()
+            // Check data
+            guard let data = data else {
+                completion(.failure(.invalidData))
+                return
+            }
+            // Proceed to decoding data
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                decoder.dateDecodingStrategy = .iso8601
+                let result = try decoder.decode(User.self, from: data)
+                completion(.success(result))
+            } catch {
+                print(error)
+                completion(.failure(.invalidData))
+            }
         }
-    
-    private func handleStatusCode(_ statusCode: Int?) -> NetworkError {
-        guard let statusCode else {
-            return .unknown
-        }
-        switch statusCode {
-        case 400:
-            return .e400
-        case 401:
-            return .e401
-        case 403:
-            return .e403
-        case 404:
-            return .e404
-        case 500...599:
-            return .e500to599
-        default:
-            return .unknown
-        }
+        task.resume()
     }
 }
 
 // MARK: - Image download methods
 extension NetworkManager {
-    func downloadImage(from urlString: String) async -> UIImage? {
+    
+    func downloadImage(fromURL urlString: String) async -> UIImage? {
         guard let url = URL(string: urlString) else { return nil }
-
+        
         let nsUrlString = urlString as NSString
         
         // Check if the image is in cache already
@@ -179,4 +159,5 @@ extension NetworkManager {
         }
         return nil
     }
+    
 }

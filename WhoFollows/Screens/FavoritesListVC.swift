@@ -78,7 +78,7 @@ extension FavoritesListVC: TableViewDelegateMethods {
             // Try to download instead
             print("Downloading the image")
             Task {
-                if let image = await NetworkManager.shared.downloadImage(from: favorite.avatarUrl) {
+                if let image = await NetworkManager.shared.downloadImage(fromURL: favorite.avatarUrl) {
                     try? image.saveToDisk(follower: favorite)
                     cell.set(with: favorite, image: image)
                 } else {
@@ -97,7 +97,11 @@ extension FavoritesListVC: TableViewDelegateMethods {
         present(navController, animated: true)
     }
     
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
         if editingStyle == .delete {
             let favoriteToDelete = favorites[indexPath.row]
             do {

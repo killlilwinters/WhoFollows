@@ -27,24 +27,24 @@ final class WFGenericButtonVC: UIButton {
         image: UIImage? = nil,
         configType: UIButton.Configuration
     ) {
-        // Config
+        
         var config = configType
-        config.title = text
         if configType == .borderedTinted() { config.baseForegroundColor = color }
+        if image != nil { config.image = image }
+        
+        config.title = text
         config.buttonSize = .large
         config.background.cornerRadius = 15
         config.imagePadding = 8
-        if image != nil { config.image = image }
         config.contentInsets = .init(top: 12, leading: 20, bottom: 12, trailing: 20)
         config.baseBackgroundColor = color
         // Other
         configuration = config
-        
         translatesAutoresizingMaskIntoConstraints = false
+        
     }
 }
 
 #Preview {
-    let button = WFGenericButtonVC(text: "Preview", color: .systemBlue)
-    return button
+    WFGenericButtonVC(text: "Preview", color: .systemBlue)
 }

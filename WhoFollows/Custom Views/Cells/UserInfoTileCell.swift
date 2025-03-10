@@ -59,8 +59,9 @@ extension UserInfoTileCell {
     }
 }
 
-// MARK: - Setting Views
+// MARK: - Setting
 extension UserInfoTileCell {
+    
     private func setupCell() {
         layer.cornerRadius = 30
         layer.backgroundColor = tileColor.cgColor
@@ -68,12 +69,8 @@ extension UserInfoTileCell {
         setupLayout()
         setAdditionalSettings()
     }
-}
-
-// MARK: - Setting
-extension UserInfoTileCell {
+    
     private func addSubViews() {
-//        addSubview(imageView)
         addSubviews(vStack, hStack)
         [valueLabel, imageView].forEach {
             hStack.addArrangedSubview($0)
@@ -82,6 +79,7 @@ extension UserInfoTileCell {
             vStack.addArrangedSubview($0)
         }
     }
+    
 }
 
 // MARK: - Layout

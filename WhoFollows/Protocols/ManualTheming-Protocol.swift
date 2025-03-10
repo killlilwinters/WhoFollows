@@ -18,9 +18,12 @@ extension ManualTheming where Self: UIView {
         DispatchQueue.main.async {
             self.registerForTraitChanges(
                 [UITraitUserInterfaceStyle.self],
+                
                 handler: { (self: Self, _: UITraitCollection) in
                     self.updateAppearance()
-                })
+                }
+                
+            )
         }
     }
 }
@@ -30,9 +33,12 @@ extension ManualTheming where Self: UIViewController {
         DispatchQueue.main.async {
             self.registerForTraitChanges(
                 [UITraitUserInterfaceStyle.self],
+                
                 handler: { (self: Self, _: UITraitCollection) in
                     self.updateAppearance()
-                })
+                }
+                
+            )
         }
     }
 }
