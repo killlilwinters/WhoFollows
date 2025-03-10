@@ -4,6 +4,7 @@
 //
 //  Created by Maks Winters on 05.03.2025.
 //
+
 import Foundation
 import XCTest
 @testable import WhoFollows

@@ -4,6 +4,7 @@
 //
 //  Created by Maks Winters on 10.03.2025.
 //
+
 import Foundation
 
 enum UIImageError: LocalizedError {

@@ -74,12 +74,12 @@ final class WFUserInfoHeaderVC: UIViewController {
 extension WFUserInfoHeaderVC {
     
     func shareButtonAction() {
-        guard let user = user else { return }
+        guard let user else { return }
         delegate.didTapShareButton(for: user)
     }
     
     func safariButtonAction() {
-        guard let user = user else { return }
+        guard let user else { return }
         delegate.didTapSafariButton(for: user)
     }
     

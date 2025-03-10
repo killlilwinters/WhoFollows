@@ -4,6 +4,7 @@
 //
 //  Created by Maks Winters on 05.02.2025.
 //
+
 import Foundation
 
 struct User: Codable, Hashable {

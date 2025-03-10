@@ -58,10 +58,23 @@ extension UIViewController {
     }
     
     func displayEmptyStateView(with message: String, in view: UIView) {
-        let emptyStateView = WFEmptyStateView(message: message)
-        emptyStateView.frame = view.bounds
-        view.addSubview(emptyStateView)
+        if let view = view.subviews.first(where: { $0 is WFEmptyStateView }) {
+            let emptyStateView = view as? WFEmptyStateView
+            emptyStateView?.messageLabel.text = message
+            return
+        } else {
+            let emptyStateView = WFEmptyStateView(message: message)
+            emptyStateView.frame = view.bounds
+            view.addSubview(emptyStateView)
+        }
     }
+    
+    func dismissEmptyStateView(from view: UIView) {
+        view.subviews
+            .filter { $0 is WFEmptyStateView }
+            .forEach { $0.removeFromSuperview() }
+    }
+    
     func presentSafariVC(with url: URL) {
         let safariVC = SFSafariViewController(url: url)
         safariVC.preferredControlTintColor = .systemOrange

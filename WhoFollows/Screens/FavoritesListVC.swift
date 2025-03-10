@@ -113,6 +113,10 @@ extension FavoritesListVC: TableViewDelegateMethods {
             }
             favorites.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
+            if favorites.isEmpty {
+                let message = "You do not have any favorites yet :("
+                self.displayEmptyStateView(with: message, in: self.view)
+            }
         }
     }
     

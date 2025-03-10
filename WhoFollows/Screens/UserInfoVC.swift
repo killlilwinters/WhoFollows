@@ -181,7 +181,7 @@ extension UserInfoVC {
         }
         // Setting up the header view
         dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
-            guard let self = self else { fatalError("Error creating the header view") }
+            guard let self else { fatalError("Error creating the header view") }
             
             // Dequeue Header
             if kind == UICollectionView.elementKindSectionHeader {
@@ -318,10 +318,10 @@ extension UserInfoVC {
             try coreDataController.addFollower(follower)
             // Try to save the avatar image
             let image = await networkManager.downloadImage(fromURL: user?.avatarUrl ?? "")
-            guard let image = image else { return }
+            guard let image else { return }
             try image.saveToDisk(follower: follower)
         } catch {
-            presentWFAlert(title: WFAlertTitleMessages.somethingWentWrong, message: error.localizedDescription)
+            handleErrorResult(error: error)
         }
     }
 }

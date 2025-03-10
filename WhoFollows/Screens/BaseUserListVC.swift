@@ -4,6 +4,7 @@
 //
 //  Created by Maks Winters on 02.03.2025.
 //
+
 import UIKit
 
 class BaseUserListVC: UIViewController, DataLoadingView {
@@ -82,12 +83,11 @@ class BaseUserListVC: UIViewController, DataLoadingView {
 }
 // MARK: - Logic
 extension BaseUserListVC {
+    @MainActor
     private func checkIfHasFollowers(_: [Follower]) {
         if self.followers.isEmpty {
             let message = "This user doesn't seem to have any followers yet..."
-            DispatchQueue.main.async {
-                self.displayEmptyStateView(with: message, in: self.view)
-            }
+            self.displayEmptyStateView(with: message, in: self.view)
         }
     }
     private func checkIfHasMoreFollowers(_ followers: [Follower]) {
@@ -154,9 +154,6 @@ extension BaseUserListVC {
             } else {
                 snapshot.appendItems(self.followers)
             }
-        }
-        
-        DispatchQueue.main.async {
             self.dataSource.apply(snapshot, animatingDifferences: true)
         }
     }
@@ -199,6 +196,11 @@ extension BaseUserListVC: UISearchResultsUpdating {
         isFiltering = true
         filteredFollowers = followers.filter {
             return $0.login.containsCaseInsensitive(filter)
+        }
+        if filteredFollowers.isEmpty {
+            self.displayEmptyStateView(with: "No followers for \"\(filter)\"", in: self.view)
+        } else {
+            self.dismissEmptyStateView(from: self.view)
         }
         updateSnapshot(with: filteredFollowers)
     }

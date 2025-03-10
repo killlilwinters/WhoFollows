@@ -19,7 +19,7 @@ final class WFUserInfoFooterVC: UIViewController {
     }
     
     func setUser(_ user: User) {
-        textLabel.text = StaticDateFormatter.decodeDateForUser(user: user)
+        textLabel.text = user.createdAt.convertToMonthYearFormat()
     }
     
     private func applyConstraints() {

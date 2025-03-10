@@ -27,7 +27,7 @@ final class FavoriteCell: UITableViewCell {
     func set(with follower: Follower, image: UIImage?) {
         usernameLabel.text = follower.login
         
-        guard let image = image else { return }
+        guard let image else { return }
         avatarImageView.setOfflineImage(image: image)
     }
 }

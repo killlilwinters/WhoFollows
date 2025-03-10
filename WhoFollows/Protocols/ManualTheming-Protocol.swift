@@ -14,31 +14,29 @@ protocol ManualTheming: AnyObject {
 }
 
 extension ManualTheming where Self: UIView {
+    @MainActor
     func registerForApperanceChanges() {
-        DispatchQueue.main.async {
-            self.registerForTraitChanges(
-                [UITraitUserInterfaceStyle.self],
-                
-                handler: { (self: Self, _: UITraitCollection) in
-                    self.updateAppearance()
-                }
-                
-            )
-        }
+        self.registerForTraitChanges(
+            [UITraitUserInterfaceStyle.self],
+            
+            handler: { (self: Self, _: UITraitCollection) in
+                self.updateAppearance()
+            }
+            
+        )
     }
 }
 
 extension ManualTheming where Self: UIViewController {
+    @MainActor
     func registerForApperanceChanges() {
-        DispatchQueue.main.async {
-            self.registerForTraitChanges(
-                [UITraitUserInterfaceStyle.self],
-                
-                handler: { (self: Self, _: UITraitCollection) in
-                    self.updateAppearance()
-                }
-                
-            )
-        }
+        self.registerForTraitChanges(
+            [UITraitUserInterfaceStyle.self],
+            
+            handler: { (self: Self, _: UITraitCollection) in
+                self.updateAppearance()
+            }
+            
+        )
     }
 }

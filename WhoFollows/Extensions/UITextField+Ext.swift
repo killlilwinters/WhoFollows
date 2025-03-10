@@ -19,7 +19,7 @@ extension UITextField {
         }
         set {
             removeTarget(self, action: #selector(limitLength), for: .editingChanged)
-            if let newValue = newValue {
+            if let newValue {
                 _maxLength = newValue
                 addTarget(self, action: #selector(limitLength), for: .editingChanged)
             } else {

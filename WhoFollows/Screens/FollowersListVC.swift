@@ -36,7 +36,7 @@ extension FollowersListVC {
             try coreDataController.addFollower(follower)
             // Try to save the avatar image
             let image = await networkManager.downloadImage(fromURL: user.avatarUrl)
-            guard let image = image else { return }
+            guard let image else { return }
             try image.saveToDisk(follower: follower)
         } catch {
             handleErrorResult(error: error)

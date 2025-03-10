@@ -4,6 +4,7 @@
 //
 //  Created by Maks Winters on 20.02.2025.
 //
+
 import UIKit
 /// swiftlint:disable line_length
 

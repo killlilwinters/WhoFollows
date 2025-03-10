@@ -6,6 +6,7 @@
 //
 
 import UIKit
+
 final class WFGenericButtonVC: UIButton {
 
     init(text: String,

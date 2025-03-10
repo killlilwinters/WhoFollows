@@ -4,6 +4,7 @@
 //
 //  Created by Maks Winters on 06.03.2025.
 //
+
 import Foundation
 
 enum CoreDataError: LocalizedError {

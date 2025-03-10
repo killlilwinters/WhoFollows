@@ -26,6 +26,9 @@ class WFEmptyStateView: UIView {
         messageLabel.text = message
     }
     // MARK: - Setup
+    func updateLabelText(_ text: String) {
+        messageLabel.text = text
+    }
     private func setupView() {
         // Adding subviews
         addSubviews(messageLabel, imageLogo)
@@ -39,16 +42,19 @@ class WFEmptyStateView: UIView {
     }
     // MARK: - Layout setup
     private func setupLayout() {
+        let screenHeight = UIScreen.main.bounds.height
         // messageLabel
         NSLayoutConstraint.activate([
             messageLabel.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.8),
-            messageLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -125),
+            messageLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -(screenHeight / 4)),
             messageLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
         // imageLogo
         NSLayoutConstraint.activate([
             imageLogo.centerXAnchor.constraint(equalTo: trailingAnchor, constant: -30),
-            imageLogo.centerYAnchor.constraint(equalTo: bottomAnchor, constant: -150)
+            imageLogo.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: 50),
+            imageLogo.widthAnchor.constraint(equalToConstant: screenHeight / 1.6),
+            imageLogo.heightAnchor.constraint(equalToConstant: screenHeight / 1.6)
         ])
         imageLogo.setContentCompressionResistancePriority(.required, for: .horizontal)
     }

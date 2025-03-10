@@ -35,13 +35,12 @@ extension DataLoadingView {
             activityIndicator.startAnimating()
         }
     }
+    @MainActor
     func dismissLoadingView() {
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: 0.5, animations: {
-                self.containerView.alpha = 0
-            }, completion: { _ in
-                self.containerView.removeFromSuperview()
-            })
-        }
+        UIView.animate(withDuration: 0.5, animations: {
+            self.containerView.alpha = 0
+        }, completion: { _ in
+            self.containerView.removeFromSuperview()
+        })
     }
 }
