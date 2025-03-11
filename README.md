@@ -129,4 +129,4 @@ Connect your device, select it in Xcode, and click **Run** to build and launch t
 
 ## More
 
-Video showcase can be found [HERE](https://youtube.com/shorts/LGBHsIdkYcE).
+Video showcase can be found [HERE](https://youtube.com/shorts/pU8Lx0gqSHY).

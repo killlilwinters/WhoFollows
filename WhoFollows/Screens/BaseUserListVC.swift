@@ -190,6 +190,7 @@ extension BaseUserListVC: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter = searchController.searchBar.text, !filter.isEmpty else {
             isFiltering = false
+            self.dismissEmptyStateView(from: self.view)
             updateSnapshot(with: followers)
             return
         }
