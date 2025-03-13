@@ -196,7 +196,7 @@ extension BaseUserListVC: UISearchResultsUpdating {
         }
         isFiltering = true
         filteredFollowers = followers.filter {
-            return $0.login.containsCaseInsensitive(filter)
+            return $0.login.localizedStandardContains(filter)
         }
         if filteredFollowers.isEmpty {
             self.displayEmptyStateView(with: "No followers for \"\(filter)\"", in: self.view)
