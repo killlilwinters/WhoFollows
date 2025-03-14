@@ -31,7 +31,7 @@ extension FavoritesListVC {
             let message = "You do not have any favorites yet :("
             self.displayEmptyStateView(with: message, in: self.view)
         } else {
-            view.bringSubviewToFront(tableView)
+            self.dismissEmptyStateView(from: self.view)
             tableView.reloadData()
         }
     }
