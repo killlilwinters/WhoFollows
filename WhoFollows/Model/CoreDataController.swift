@@ -118,7 +118,7 @@ extension CoreDataController {
     
     func addFollower(_ follower: Follower) throws {
         guard doesFollowerExist(login: follower.login) == false else {
-            throw CoreDataError.followerAlreadyExists
+            throw CoreDataError.followerAlreadyExists(login: follower.login)
         }
         
         let newFollower = FollowerEntity(context: context)
